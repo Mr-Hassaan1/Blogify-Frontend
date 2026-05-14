@@ -99,11 +99,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: "create-blog",
-        element: (
-          <>
-            <CreateBlog />
-          </>
-        ),
+        element: <CreateBlog />,
+      },
+      {
+        path: "create-blog/:blogId",
+        element: <UpdateBlog />,
       },
       {
         path: "your-blog",
