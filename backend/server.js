@@ -1,8 +1,9 @@
 import express from "express"
 import dotenv from "dotenv"
 import connectDB from "./database/db.js"
-import userRoute from "./routes/user.route.js"
+import userRoute from "./routes/userRoute.js"
 import blogRoute from "./routes/blogRoute.js"
+import commentRoute from "./routes/commentRoute.js"
 import cors from "cors"
 import cookieParser from "cookie-parser";
 
@@ -24,8 +25,9 @@ app.use(
 
 app.use("/api/v1/user", userRoute)
 app.use("/api/v1/blog", blogRoute)
+app.use("/api/v1/comment", commentRoute)
 
 app.listen(PORT, () => {
-    console.log(`Server listen at port ${PORT}`);
-    connectDB();
+  console.log(`Server listen at port ${PORT}`);
+  connectDB();
 })

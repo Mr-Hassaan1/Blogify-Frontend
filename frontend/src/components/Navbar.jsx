@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "./ui/button";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Input } from "./ui/input";
 import Logo from "../assets/logo.png";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -10,24 +10,7 @@ import axios from "axios";
 import { setUser } from "@/Redux/authSlice";
 import userLogo from "../assets/user.jpg";
 import { HiMenuAlt1, HiMenuAlt3 } from "react-icons/hi";
-import {
-  ChartColumnBig,
-  Cloud,
-  CreditCard,
-  Github,
-  Keyboard,
-  LifeBuoy,
-  LogOut,
-  Mail,
-  MessageSquare,
-  Plus,
-  PlusCircle,
-  Search,
-  Settings,
-  User,
-  UserPlus,
-  Users,
-} from "lucide-react";
+import { ChartColumnBig, LogOut, Search, User } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -36,18 +19,33 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { FaMoon, FaRegEdit, FaSun } from "react-icons/fa";
 import { toggleTheme } from "@/Redux/themeSlice";
 import { LiaCommentSolid } from "react-icons/lia";
+import ResponsiveMenu from "./ResponsiveMenu";
 
 function Navbar() {
   const { user } = useSelector((store) => store.auth);
   const { theme } = useSelector((store) => store.theme);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [openNav, setOpenNav] = useState(false);
+
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handelSearch = (e) => {
+    e.preventDefault();
+    if (searchTerm.trim() != "") {
+      navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
+      setSearchTerm("");
+    }
+  };
+
+  const toggleNav = () => {
+    setOpenNav(!openNav);
+  };
 
   const logoutHandler = async (e) => {
     try {
@@ -82,9 +80,11 @@ function Navbar() {
             <Input
               type="text"
               placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="border border-gray-700 dark:border-gray-900 bg-gray-300 w-50 hidden md:block"
             />
-            <Button className="absolute top-0 right-0">
+            <Button onClick={handelSearch} className="absolute top-0 right-0">
               <Search />
             </Button>
           </div>
@@ -104,7 +104,10 @@ function Navbar() {
             </Link>
           </ul>
           <div className="flex">
-            <Button className="h-10 w-10" onClick={() => dispatch(toggleTheme())}>
+            <Button
+              className="h-10 w-10"
+              onClick={() => dispatch(toggleTheme())}
+            >
               {theme === "light" ? <FaMoon /> : <FaSun />}
             </Button>
             {user ? (
@@ -116,7 +119,10 @@ function Navbar() {
                       <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="start" className=" dark:bg-gray-800">
+                  <DropdownMenuContent
+                    align="start"
+                    className=" dark:bg-gray-800"
+                  >
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
@@ -167,7 +173,18 @@ function Navbar() {
               </div>
             )}
           </div>
+
+          {openNav ? (
+            <HiMenuAlt3 onClick={toggleNav} className="w-7 h-7 md:hidden" />
+          ) : (
+            <HiMenuAlt1 onClick={toggleNav} className="w-7 h-7 md:hidden" />
+          )}
         </nav>
+        <ResponsiveMenu
+          openNav={openNav}
+          setOpenNav={setOpenNav}
+          logoutHandler={logoutHandler}
+        />
       </div>
     </div>
   );

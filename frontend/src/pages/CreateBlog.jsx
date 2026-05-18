@@ -43,7 +43,9 @@ const CreateBlog = () => {
         },
       );
       if (res.data.success) {
-        dispatch(setBlog([...(Array.isArray(blog) ? blog : []), res.data.blog]));
+        dispatch(
+          setBlog([...(Array.isArray(blog) ? blog : []), res.data.blog]),
+        );
         navigate(`/dashboard/create-blog/${res.data.blog._id}`);
         toast.success(res.data.message);
       } else {
@@ -57,7 +59,7 @@ const CreateBlog = () => {
     }
   };
   return (
-    <div className="pt-20 md:ml-80 md:h-screen">
+    <div className="p-4 md:pr-20 h-screen md:ml-80 pt-20">
       <div className="max-w-6xl mx-auto mt-8 ">
         <Card className="md:p-10 p-4 dark:bg-gray-800">
           <h1 className="text-2xl font-bold">Lets create blog</h1>
@@ -78,7 +80,7 @@ const CreateBlog = () => {
               />
             </div>
             <div className="mb-10">
-              <Label className="mb-3" >Category:</Label>
+              <Label className="mb-3">Category:</Label>
               <Select onValueChange={getSelectedCategory}>
                 <SelectTrigger className="w-45 bg-white dark:bg-gray-700">
                   <SelectValue placeholder="Select a category" />
@@ -94,6 +96,7 @@ const CreateBlog = () => {
                     </SelectItem>
                     <SelectItem value="Blogging">Blogging</SelectItem>
                     <SelectItem value="Photography">Photography</SelectItem>
+                    <SelectItem value="Traveling">Traveling</SelectItem>
                     <SelectItem value="Cooking">Cooking</SelectItem>
                   </SelectGroup>
                 </SelectContent>
@@ -101,7 +104,7 @@ const CreateBlog = () => {
             </div>
             <div className="flex gap-2">
               <Button
-                className=""
+                className="cursor-pointer "
                 disabled={loading}
                 onClick={createBlogHandler}
               >

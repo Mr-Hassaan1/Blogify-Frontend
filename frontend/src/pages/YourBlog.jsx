@@ -93,14 +93,18 @@ function YourBlog() {
                       className="w-20 rounded-md hidden md:block"
                     />
                     <h1
-                      className="hover:underline cursor-pointer"
+                      className="hover:underline cursor-pointer w-30 md:w-full truncate"
                       onClick={() => navigate(`/blogs/${item._id}`)}
                     >
                       {item.title}
                     </h1>
                   </TableCell>
-                  <TableCell>{item.category}</TableCell>
-                  <TableCell className="">{dateHandler(index)}</TableCell>
+                  <TableCell>
+                    <h2 className="w-15 md:w-full truncate">{item.category}</h2>
+                  </TableCell>
+                  <TableCell>
+                    <h2 className="w-12 md:w-full truncate">{dateHandler(index)}</h2>
+                  </TableCell>
                   <TableCell className="text-center">
                     <DropdownMenu>
                       <DropdownMenuTrigger>

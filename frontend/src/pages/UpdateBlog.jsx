@@ -137,15 +137,18 @@ const UpdateBlog = () => {
   };
 
   return (
-    <div className="pb-10 px-3 pt-20 md:ml-80">
+    <div className="pb-10 px-4 pt-20 md:px-6 md:ml-80">
       <div className="max-w-6xl mx-auto mt-8">
-        <Card className="w-full bg-white dark:bg-gray-800 p-5 space-y-2">
-          <h1 className=" text-4xl font-bold ">Basic Blog Information</h1>
-          <p className="">
-            Make changes to your blogs here. Click publish when you're done.
-          </p>
-          <div className="space-x-2">
+        <Card className="w-full bg-white dark:bg-gray-800 p-5 space-y-6 sm:space-y-8">
+          <div className="space-y-3">
+            <h1 className="text-3xl md:text-4xl font-bold">Basic Blog Information</h1>
+            <p className="text-sm text-slate-600 dark:text-slate-300">
+              Make changes to your blogs here. Click publish when you're done.
+            </p>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-2">
             <Button
+              className="w-full sm:w-auto"
               onClick={() =>
                 togglePublishUnpublish(
                   selectBlog.isPublished ? "false" : "true",
@@ -154,31 +157,33 @@ const UpdateBlog = () => {
             >
               {selectBlog?.isPublished ? "UnPublish" : "Publish"}
             </Button>
-            <Button variant="destructive" onClick={deleteBlog}>
+            <Button className="w-full sm:w-auto" variant="destructive" onClick={deleteBlog}>
               Remove Course
             </Button>
           </div>
-          <div className="pt-10">
-            <Label>Title</Label>
-            <Input
-              type="text"
-              placeholder="Enter a title"
-              name="title"
-              value={blogData.title}
-              onChange={handleChange}
-              className="dark:border-gray-300"
-            />
-          </div>
-          <div>
-            <Label>Subtitle</Label>
-            <Input
-              type="text"
-              placeholder="Enter a subtitle"
-              name="subtitle"
-              value={blogData.subtitle}
-              onChange={handleChange}
-              className="dark:border-gray-300"
-            />
+          <div className="space-y-4">
+            <div>
+              <Label>Title</Label>
+              <Input
+                type="text"
+                placeholder="Enter a title"
+                name="title"
+                value={blogData.title}
+                onChange={handleChange}
+                className="dark:border-gray-300"
+              />
+            </div>
+            <div>
+              <Label>Subtitle</Label>
+              <Input
+                type="text"
+                placeholder="Enter a subtitle"
+                name="subtitle"
+                value={blogData.subtitle}
+                onChange={handleChange}
+                className="dark:border-gray-300"
+              />
+            </div>
           </div>
           <div>
             <Label>Description</Label>
@@ -186,56 +191,59 @@ const UpdateBlog = () => {
               ref={editor}
               value={blogData.description}
               onChange={(newContent) => setContent(newContent)}
-              className="jodit_toolbar"
+              className="jodit_toolbar min-h-65 md:min-h-80"
             />
           </div>
-          <div>
-            <Label>Category</Label>
-            <Select
-              onValueChange={selectCategory}
-              className="dark:border-gray-300"
-            >
-              <SelectTrigger className="w-45">
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Category</SelectLabel>
-                  <SelectItem value="Web Development">
-                    Web Development
-                  </SelectItem>
-                  <SelectItem value="Digital Marketing">
-                    Digital Marketing
-                  </SelectItem>
-                  <SelectItem value="Blogging">Blogging</SelectItem>
-                  <SelectItem value="Photography">Photography</SelectItem>
-                  <SelectItem value="Cooking">Cooking</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label>Thumbnail</Label>
-            <Input
-              id="file"
-              type="file"
-              onChange={selectThumbnail}
-              accept="image/*"
-              className="w-fit dark:border-gray-300"
-            />
-            {previewThumbnail && (
-              <img
-                src={previewThumbnail}
-                className="w-64 my-2"
-                alt="Course Thumbnail"
+          <div className="space-y-4">
+            <div>
+              <Label>Category</Label>
+              <Select
+                onValueChange={selectCategory}
+                className="dark:border-gray-300 w-full"
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Category</SelectLabel>
+                    <SelectItem value="Web Development">
+                      Web Development
+                    </SelectItem>
+                    <SelectItem value="Digital Marketing">
+                      Digital Marketing
+                    </SelectItem>
+                    <SelectItem value="Blogging">Blogging</SelectItem>
+                    <SelectItem value="Photography">Photography</SelectItem>
+                    <SelectItem value="Traveling">Traveling</SelectItem>
+                    <SelectItem value="Cooking">Cooking</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Thumbnail</Label>
+              <Input
+                id="file"
+                type="file"
+                onChange={selectThumbnail}
+                accept="image/*"
+                className="w-full dark:border-gray-300"
               />
-            )}
+              {previewThumbnail && (
+                <img
+                  src={previewThumbnail}
+                  className="w-full max-w-md my-2 rounded-xl object-cover"
+                  alt="Course Thumbnail"
+                />
+              )}
+            </div>
           </div>
-          <div className="flex gap-3">
-            <Button variant="outline" onClick={() => navigate(-1)}>
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+            <Button variant="outline" className="w-full sm:w-auto" onClick={() => navigate(-1)}>
               Back
             </Button>
-            <Button onClick={updateBlogHandler}>
+            <Button className="w-full sm:w-auto" onClick={updateBlogHandler}>
               {loading ? "Please Wait" : "Save"}
             </Button>
           </div>

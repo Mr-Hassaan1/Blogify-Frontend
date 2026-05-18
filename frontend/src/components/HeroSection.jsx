@@ -16,13 +16,13 @@ function HeroSection() {
             development, digital marketing, and tech innovations.
           </p>
           <div className="flex space-x-4">
-            <Link>
-              <Button className="text-lg ">Get Started</Button>
+            <Link to={"/dashboard/create-blog"}>
+              <Button className="cursor-pointer text-lg ">Get Started</Button>
             </Link>
-            <Link>
+            <Link to={"/about"}>
               <Button
                 variant="outline"
-                className="border-white px-6 py-3 text-lg"
+                className="border-white  px-6 py-3 text-lg"
               >
                 Learn More
               </Button>
