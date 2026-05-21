@@ -1,4 +1,4 @@
-import { User } from "../models/user.model.js";
+import { User } from "../models/userModel.js";
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 import getDataUri from "../utils/dataUri.js";
@@ -145,10 +145,10 @@ export const updateProfile = async (req, res) => {
         if (firstName) user.firstName = firstName
         if (lastName) user.lastName = lastName
         if (occupation) user.occupation = occupation
-        if (instagram) user.instagram = instagram
-        if (facebook) user.facebook = facebook
-        if (linkedin) user.linkedin = linkedin
-        if (github) user.github = github
+        if (typeof instagram !== "undefined") user.instagram = instagram === "" ? null : instagram
+        if (typeof facebook !== "undefined") user.facebook = facebook === "" ? null : facebook
+        if (typeof linkedin !== "undefined") user.linkedin = linkedin === "" ? null : linkedin
+        if (typeof github !== "undefined") user.github = github === "" ? null : github
         if (bio) user.bio = bio
 
         await user.save()
@@ -166,3 +166,21 @@ export const updateProfile = async (req, res) => {
         })
     }
 }
+
+export const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find().select('-password'); // exclude password field
+        res.status(200).json({
+            success: true,
+            message: "User list fetched successfully",
+            total: users.length,
+            users
+        });
+    } catch (error) {
+        console.error("Error fetching user list:", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch users"
+        });
+    }
+};

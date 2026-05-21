@@ -12,8 +12,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Bookmark, Heart, MessageSquare, Share2 } from "lucide-react";
-// import CommentBox from '@/components/CommentBox'
+import { Bookmark, MessageSquare, Share2 } from "lucide-react";
+import CommentBox from "@/components/CommentBox";
 import axios from "axios";
 import { FaHeart, FaRegHeart } from "react-icons/fa6";
 import { setBlog } from "@/Redux/blogSlice";
@@ -26,10 +26,14 @@ const BlogView = () => {
   const { user } = useSelector((store) => store.auth);
   const selectedBlog = blog.find((blog) => blog._id === blogId);
   const [blogLike, setBlogLike] = useState(selectedBlog?.likes.length);
-  // const { comment } = useSelector(store => store.comment)
+  const { comment } = useSelector((store) => store.comment);
   const [liked, setLiked] = useState(
     selectedBlog?.likes.includes(user?._id) || false,
   );
+
+  const [bookmarked, setBookmarked] = useState(false);
+  const [showComments, setShowComments] = useState(false);
+
   const dispatch = useDispatch();
   console.log(selectedBlog);
 
@@ -100,15 +104,15 @@ const BlogView = () => {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <Link to={"/"}>
-                <BreadcrumbLink>Home</BreadcrumbLink>
-              </Link>
+              <BreadcrumbLink asChild>
+                <Link to={"/"}>Home</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <Link to={"/blogs"}>
-                <BreadcrumbLink>Blogs</BreadcrumbLink>
-              </Link>
+              <BreadcrumbLink asChild>
+                <Link to={"/blogs"}>Blogs</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
@@ -141,7 +145,7 @@ const BlogView = () => {
             </div>
           </div>
         </div>
-        {/* Featured Image   */}
+        {/* Featured Image */}
         <div className="mb-8 rounded-lg overflow-hidden">
           <img
             src={selectedBlog?.thumbnail}
@@ -154,18 +158,19 @@ const BlogView = () => {
             {selectedBlog.subtitle}
           </p>
         </div>
-        <p
-          className=""
-          dangerouslySetInnerHTML={{ __html: selectedBlog.description }}
-        />
+
+        <p dangerouslySetInnerHTML={{ __html: selectedBlog.description }} />
+
         <div className="mt-10">
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mb-8">
-            <Badge variant="secondary">Node.js</Badge>
-            <Badge variant="secondary">React</Badge>
-            <Badge variant="secondary">Web Development</Badge>
-            <Badge variant="secondary">JavaScript</Badge>
+            <Badge variant="secondary">Storytelling</Badge>
+            <Badge variant="secondary">Ideas</Badge>
+            <Badge variant="secondary">Blogs</Badge>
+            <Badge variant="secondary">Trends</Badge>
+            <Badge variant="secondary">Insights</Badge>
           </div>
+
           {/* Engagement */}
           <div className="flex items-center justify-between border-y dark:border-gray-800 border-gray-300 py-4 mb-8">
             <div className="flex items-center space-x-4">
@@ -173,46 +178,54 @@ const BlogView = () => {
                 onClick={likeOrDislikeHandler}
                 variant="ghost"
                 size="sm"
-                className="flex items-center gap-1"
+                className="cursor-pointer flex items-center gap-1"
               >
                 {liked ? (
-                  <FaHeart
-                    size={"24"}
-                    className="cursor-pointer text-red-600"
-                  />
+                  <FaHeart size={"24"} className=" text-red-600" />
                 ) : (
-                  <FaRegHeart
-                    size={"24"}
-                    className="cursor-pointer hover:text-gray-60"
-                  />
+                  <FaRegHeart size={"24"} className=" hover:text-gray-600" />
                 )}
 
                 <span>{blogLike}</span>
               </Button>
-
               <Button
                 variant="ghost"
                 size="sm"
-                className="flex items-center gap-1"
+                className=" cursor-pointer flex items-center gap-1"
+                onClick={() => setShowComments((s) => !s)}
+                aria-expanded={showComments}
               >
                 <MessageSquare className="h-4 w-4" />
-                <span>Comments</span>
+                <span>{comment.length} Comments</span>
               </Button>
             </div>
             <div className="flex items-center space-x-2">
-              <Button variant="ghost" size="sm">
-                <Bookmark className="h-4 w-4" />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setBookmarked(!bookmarked)}
+                className="cursor-pointer"
+              >
+                <Bookmark
+                  className={`h-4 w-4 transition-colors ${
+                    bookmarked
+                      ? "fill-black text-black dark:fill-white dark:text-white"
+                      : "text-gray-500"
+                  }`}
+                />
               </Button>
               <Button
                 onClick={() => handleShare(selectedBlog._id)}
                 variant="ghost"
-                size="sm"
+                size="sm "
+                className="cursor-pointer"
               >
                 <Share2 className="h-4 w-4" />
               </Button>
             </div>
           </div>
         </div>
+        {showComments && <CommentBox selectedBlog={selectedBlog} />}
       </div>
     </div>
   );

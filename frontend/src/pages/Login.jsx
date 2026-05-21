@@ -15,6 +15,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading, setUser } from "../Redux/authSlice";
+import { loginSchema, validateField } from "../lib/validationSchemas";
+import ValidationMessage from "../components/ValidationMessage";
 
 function Login() {
   const { loading } = useSelector((store) => store.auth);
@@ -25,21 +27,41 @@ function Login() {
     email: "",
     password: "",
   });
+  const [errors, setErrors] = useState({});
 
-  const handleInputChange = (e) => {
+  const handleInputChange = async (e) => {
     const { name, value } = e.target;
     setInputFields((previousData) => ({
       ...previousData,
       [name]: value,
     }));
+
+    const error = await validateField(name, value, loginSchema);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: error,
+    }));
   };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    console.log(inputFields);
 
     try {
-      dispatch(setLoading(true))
+      await loginSchema.validate(inputFields, { abortEarly: false });
+      setErrors({});
+    } catch (validationError) {
+      if (validationError.inner) {
+        const formErrors = validationError.inner.reduce((acc, curr) => {
+          acc[curr.path] = curr.message;
+          return acc;
+        }, {});
+        setErrors(formErrors);
+      }
+      return;
+    }
+
+    try {
+      dispatch(setLoading(true));
       const res = await axios.post(
         "http://localhost:3200/api/v1/user/login",
         inputFields,
@@ -58,8 +80,11 @@ function Login() {
       }
     } catch (error) {
       console.log(error);
+      toast.error(
+        error.response?.data?.message || error.message || "Login failed",
+      );
     } finally {
-      dispatch(setLoading(false))
+      dispatch(setLoading(false));
     }
   };
 
@@ -87,11 +112,12 @@ function Login() {
                 <Input
                   onChange={handleInputChange}
                   value={inputFields.email}
-                  type="email"
+                  type="text"
                   placeholder="Enter an email"
                   name="email"
                   className="dark:border-gray-600 dark:bg-gray-900"
                 />
+                <ValidationMessage name="email" errors={errors} />
               </div>
 
               <div className="relative">
@@ -105,17 +131,18 @@ function Login() {
                   autoComplete="current-password"
                   className="pr-10 dark:border-gray-600 dark:bg-gray-900"
                 />
+                <ValidationMessage name="password" errors={errors} />
 
                 <button
                   onClick={() => setShowPassword(!showPassword)}
                   type="button"
-                  className="absolute right-3 top-6  text-gray-500 hover:text-gray-700"
+                  className="absolute right-3 top-6 cursor-pointer text-gray-500 hover:text-gray-700"
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
 
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full cursor-pointer">
                 {loading ? (
                   <>
                     <Loader2 className="mr-4 h-4 animate-spin">
@@ -130,7 +157,7 @@ function Login() {
               <p className="text-center text-gray-600 dark:text-gray-300">
                 Don't have an account?{" "}
                 <Link to={"/signup"}>
-                  <span className="underline cursor-pointer text-blue-700 hover:text-blue-500">
+                  <span className="underline cursor-pointer text-blue-400 hover:text-blue-700">
                     Sign up
                   </span>
                 </Link>

@@ -1,4 +1,3 @@
-import React from "react";
 import Signup from "./pages/Signup";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home";
@@ -6,7 +5,6 @@ import Login from "./pages/Login";
 import Navbar from "./components/Navbar";
 import Profile from "./pages/Profile";
 import Blog from "./pages/Blog";
-import CreateBlog from "./pages/CreateBlog";
 import Dashboard from "./pages/Dashboard";
 import YourBlog from "./pages/YourBlog";
 import BlogView from "./pages/BlogView";
@@ -63,8 +61,9 @@ const router = createBrowserRouter([
     element: (
       <>
         <Navbar />
-
-        <BlogView />
+        <ProtectedRoute>
+          <BlogView />
+        </ProtectedRoute>
       </>
     ),
   },
@@ -73,7 +72,7 @@ const router = createBrowserRouter([
     element: (
       <>
         <Navbar />
-        <CreateBlog />
+        <UpdateBlog />
       </>
     ),
   },
@@ -92,17 +91,27 @@ const router = createBrowserRouter([
     element: (
       <>
         <Navbar />
-        <Dashboard />
+        <ProtectedRoute>
+          <Dashboard />
+        </ProtectedRoute>
       </>
     ),
     children: [
       {
         path: "create-blog",
-        element: <CreateBlog />,
+        element: (
+          <>
+            <UpdateBlog />
+          </>
+        ),
       },
       {
         path: "create-blog/:blogId",
-        element: <UpdateBlog />,
+        element: (
+          <>
+            <UpdateBlog />
+          </>
+        ),
       },
       {
         path: "your-blog",

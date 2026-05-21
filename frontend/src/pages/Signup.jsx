@@ -15,6 +15,8 @@ import { toast } from "sonner";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "../Redux/authSlice";
+import { signupSchema, validateField } from "../lib/validationSchemas";
+import ValidationMessage from "../components/ValidationMessage";
 
 function Signup() {
   const [showPassword, setShowPassword] = useState(false);
@@ -27,17 +29,39 @@ function Signup() {
     email: "",
     password: "",
   });
+  const [errors, setErrors] = useState({});
 
-  const handleInputChange = (e) => {
+  const handleInputChange = async (e) => {
     const { name, value } = e.target;
     setUserData((previousData) => ({
       ...previousData,
       [name]: value,
     }));
+
+    const error = await validateField(name, value, signupSchema);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: error,
+    }));
   };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+
+    try {
+      await signupSchema.validate(userData, { abortEarly: false });
+      setErrors({});
+    } catch (validationError) {
+      if (validationError.inner) {
+        const formErrors = validationError.inner.reduce((acc, curr) => {
+          acc[curr.path] = curr.message;
+          return acc;
+        }, {});
+        setErrors(formErrors);
+      }
+      return;
+    }
+
     try {
       dispatch(setLoading(true));
       const res = await axios.post(
@@ -54,9 +78,14 @@ function Signup() {
       if (res.data.success) {
         navigate("/login");
         toast.success(res.data.message);
+      } else {
+        toast.error(res.data.message || "Signup failed");
       }
     } catch (error) {
       console.log(error);
+      toast.error(
+        error.response?.data?.message || error.message || "Signup failed",
+      );
     } finally {
       dispatch(setLoading(false));
     }
@@ -98,6 +127,7 @@ function Signup() {
                     name="firstName"
                     className="dark:border-gray-600 dark:bg-gray-900"
                   />
+                  <ValidationMessage name="firstName" errors={errors} />
                 </div>
 
                 <div>
@@ -110,6 +140,7 @@ function Signup() {
                     name="lastName"
                     className="dark:border-gray-600 dark:bg-gray-900"
                   />
+                  <ValidationMessage name="lastName" errors={errors} />
                 </div>
               </div>
 
@@ -118,11 +149,12 @@ function Signup() {
                 <Input
                   onChange={handleInputChange}
                   value={userData.email}
-                  type="email"
+                  type="text"
                   placeholder="john.doe@example.com"
                   name="email"
                   className="dark:border-gray-600 dark:bg-gray-900"
                 />
+                <ValidationMessage name="email" errors={errors} />
               </div>
 
               <div className="relative">
@@ -136,17 +168,18 @@ function Signup() {
                   autoComplete="new-password"
                   className="pr-10 dark:border-gray-600 dark:bg-gray-900"
                 />
+                <ValidationMessage name="password" errors={errors} />
 
                 <button
                   onClick={() => setShowPassword(!showPassword)}
                   type="button"
-                  className="absolute right-3 top-6 text-gray-500 hover:text-gray-700"
+                  className="absolute right-3 top-6 text-gray-500 hover:text-gray-700 cursor-pointer"
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
 
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full cursor-pointer ">
                 {loading ? (
                   <>
                     <Loader2 className="mr-4 h-4 animate-spin" />
@@ -160,7 +193,7 @@ function Signup() {
               <p className="text-center text-gray-600 dark:text-gray-300">
                 Already have an account?{" "}
                 <Link to={"/login"}>
-                  <span className="underline cursor-pointer text-blue-700 hover:text-blue-500">
+                  <span className="underline cursor-pointer text-blue-400 hover:text-blue-700">
                     Sign in
                   </span>
                 </Link>

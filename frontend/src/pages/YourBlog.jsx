@@ -1,5 +1,4 @@
 import { Card } from "@/components/ui/card";
-import React, { useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -12,9 +11,11 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { setBlog } from "@/Redux/blogSlice";
-import { Edit, Trash2 } from "lucide-react";
+import { CloudOff, Edit, Globe, Trash2 } from "lucide-react";
+
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useEffect, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import {
   DropdownMenu,
@@ -23,33 +24,70 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
 function YourBlog() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { blog } = useSelector((store) => store.blog);
-
-  const getOwnBlog = async () => {
-    try {
-      const res = await axios.get(
-        `http://localhost:3200/api/v1/blog/get-own-blogs`,
-        { withCredentials: true },
-      );
-      if (res.data.success) {
-        dispatch(setBlog(res.data.blogs));
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [deleteId, setDeleteId] = useState(null);
+  const [publishData, setPublishData] = useState(null);
 
   useEffect(() => {
+    const getOwnBlog = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:3200/api/v1/blog/get-own-blogs`,
+          { withCredentials: true },
+        );
+        if (res.data.success) {
+          dispatch(setBlog(res.data.blogs));
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     getOwnBlog();
-  }, []);
+  }, [dispatch]);
 
   const dateHandler = (index) => {
     const date = new Date(blog[index].createdAt);
     const localDate = date.toLocaleDateString();
     return localDate;
+  };
+
+  const togglePublish = async (id, publish) => {
+    try {
+      const res = await axios.patch(
+        `http://localhost:3200/api/v1/blog/${id}?isPublished=${publish}`,
+        null,
+        { withCredentials: true },
+      );
+      if (res.data.success) {
+        const updatedBlogData = blog.map((blogItem) =>
+          blogItem._id === id
+            ? { ...blogItem, isPublished: publish }
+            : blogItem,
+        );
+        dispatch(setBlog(updatedBlogData));
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(
+        error.response?.data?.message || "Failed to update publish status.",
+      );
+    }
   };
 
   const deleteBlog = async (id) => {
@@ -79,6 +117,7 @@ function YourBlog() {
               <TableRow>
                 <TableHead>Title</TableHead>
                 <TableHead>Category</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead className="text-center">Action</TableHead>
               </TableRow>
@@ -93,14 +132,27 @@ function YourBlog() {
                       className="w-20 rounded-md hidden md:block"
                     />
                     <h1
-                      className="hover:underline cursor-pointer"
+                      className="hover:underline cursor-pointer w-30 md:w-full truncate"
                       onClick={() => navigate(`/blogs/${item._id}`)}
                     >
                       {item.title}
                     </h1>
                   </TableCell>
-                  <TableCell>{item.category}</TableCell>
-                  <TableCell className="">{dateHandler(index)}</TableCell>
+                  <TableCell>
+                    <h2 className="w-15 md:w-full truncate">{item.category}</h2>
+                  </TableCell>
+                  <TableCell>
+                    <span
+                      className={`px-2 py-1 text-xs rounded-full ${item.isPublished ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"}`}
+                    >
+                      {item.isPublished ? "Published" : "Draft"}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <h2 className="w-12 md:w-full truncate">
+                      {dateHandler(index)}
+                    </h2>
+                  </TableCell>
                   <TableCell className="text-center">
                     <DropdownMenu>
                       <DropdownMenuTrigger>
@@ -117,8 +169,35 @@ function YourBlog() {
                           Edit
                         </DropdownMenuItem>
                         <DropdownMenuItem
+                          className="cursor-pointer flex items-center gap-2"
+                          onClick={() => {
+                            const nextState = !item.isPublished;
+
+                            if (item.isPublished && nextState === false) {
+                              setPublishData({
+                                id: item._id,
+                                value: nextState,
+                              });
+                            } else {
+                              togglePublish(item._id, nextState);
+                            }
+                          }}
+                        >
+                          {item.isPublished ? (
+                            <>
+                              <CloudOff size={16} />
+                              Unpublish
+                            </>
+                          ) : (
+                            <>
+                              <Globe size={16} />
+                              Publish
+                            </>
+                          )}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
                           className="text-red-500 cursor-pointer"
-                          onClick={() => deleteBlog(item._id)}
+                          onClick={() => setDeleteId(item._id)}
                         >
                           <Trash2 />
                           Delete
@@ -132,6 +211,56 @@ function YourBlog() {
           </Table>
         </Card>
       </div>
+
+      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Blog?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You’re about to delete this Blog. This action cannot be reversed.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-600"
+              onClick={() => {
+                deleteBlog(deleteId);
+                setDeleteId(null);
+              }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={!!publishData}
+        onOpenChange={() => setPublishData(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Unpublish Blog?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This blog will become a draft and will not be visible to users.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                togglePublish(publishData.id, publishData.value);
+                setPublishData(null);
+              }}
+            >
+              Unpublish
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

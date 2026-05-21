@@ -123,11 +123,17 @@
   }
 
   body {
+    min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
     @apply bg-background text-foreground;
   }
 
   html {
-    @apply font-sans;
+    @apply font-sans overflow-y-scroll;
+    scrollbar-gutter: stable;
+    overflow-x: hidden;
+    width: 100%;
   }
 }
 
