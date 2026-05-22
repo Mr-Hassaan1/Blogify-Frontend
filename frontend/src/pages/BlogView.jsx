@@ -10,6 +10,7 @@ import {
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import userLogo from "../assets/user.jpg" 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Bookmark, MessageSquare, Share2 } from "lucide-react";
@@ -128,8 +129,8 @@ const BlogView = () => {
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center space-x-4">
               <Avatar>
-                <AvatarImage src={selectedBlog.author.photoUrl} alt="Author" />
-                <AvatarFallback>JD</AvatarFallback>
+                <AvatarImage src={selectedBlog.author.photoUrl || userLogo } alt="Author" />
+                <AvatarFallback>CN</AvatarFallback>
               </Avatar>
               <div>
                 <p className="font-medium">
