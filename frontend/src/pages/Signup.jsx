@@ -9,7 +9,7 @@ import { Label } from "../components/ui/label";
 import { Input } from "../components/ui/input";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "../components/ui/button";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "sonner";
 import axios from "axios";
@@ -20,7 +20,7 @@ import ValidationMessage from "../components/ValidationMessage";
 
 function Signup() {
   const [showPassword, setShowPassword] = useState(false);
-  const { loading } = useSelector((store) => store.auth);
+  const { loading, user } = useSelector((store) => store.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [userData, setUserData] = useState({
@@ -90,6 +90,10 @@ function Signup() {
       dispatch(setLoading(false));
     }
   };
+
+  if (user) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <div className="flex w-full h-screen overflow-hidden">

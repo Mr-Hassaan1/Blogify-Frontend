@@ -2,13 +2,24 @@ import { FaUserCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { Avatar, AvatarImage } from "./ui/avatar";
+import { useState } from "react";
 import { useSelector } from "react-redux";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const ResponsiveMenu = ({ openNav, setOpenNav, logoutHandler }) => {
   const { user } = useSelector((store) => store.auth);
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
 
   return (
-    <div
+    <Dialog open={logoutDialogOpen} onOpenChange={setLogoutDialogOpen}>
+      <div
       className={`${openNav ? "left-0" : "-left-full"} fixed bottom-0 top-0 z-20 flex h-screen w-[75%] flex-col justify-between bg-white dark:bg-gray-800 px-8 pb-6 pt-16 text-black dark:text-gray-100 md:hidden rounded-r-xl shadow-md transition-all`}
     >
       <div>
@@ -38,13 +49,14 @@ const ResponsiveMenu = ({ openNav, setOpenNav, logoutHandler }) => {
               <li className="cursor-pointer">About</li>
             </Link>
             {user ? (
-              <Button
-                onClick={() => {
-                  (logoutHandler(), setOpenNav(false));
-                }}
-              >
-                Logout
-              </Button>
+                <Button
+                  onClick={() => {
+                    setOpenNav(false);
+                    setLogoutDialogOpen(true);
+                  }}
+                >
+                  Logout
+                </Button>
             ) : (
               <Link to={"/signup"} onClick={() => setOpenNav(false)}>
                 <Button>Signup</Button>
@@ -53,7 +65,28 @@ const ResponsiveMenu = ({ openNav, setOpenNav, logoutHandler }) => {
           </ul>
         </nav>
       </div>
-    </div>
+      </div>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Confirm Logout</DialogTitle>
+          <DialogDescription>
+            Are you sure you want to log out from your account?
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setLogoutDialogOpen(false)}>Cancel</Button>
+          <Button
+            onClick={() => {
+              setOpenNav(false);
+              logoutHandler();
+              setLogoutDialogOpen(false);
+            }}
+          >
+            Logout
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 

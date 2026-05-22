@@ -21,6 +21,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { FaMoon, FaRegEdit, FaSun } from "react-icons/fa";
 import { toggleTheme } from "@/Redux/themeSlice";
 import { LiaCommentSolid } from "react-icons/lia";
@@ -32,6 +41,7 @@ function Navbar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [openNav, setOpenNav] = useState(false);
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -63,6 +73,11 @@ function Navbar() {
         error.response?.data?.message || error.message || "Logout failed",
       );
     }
+  };
+
+  const handleLogoutConfirmed = async () => {
+    setLogoutDialogOpen(false);
+    await logoutHandler();
   };
 
   return (
@@ -174,7 +189,7 @@ function Navbar() {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       className="cursor-pointer"
-                      onClick={logoutHandler}
+                      onClick={() => setLogoutDialogOpen(true)}
                     >
                       <LogOut />
                       <span>Log out</span>
@@ -183,10 +198,24 @@ function Navbar() {
                 </DropdownMenu>
                 <Button
                   className="hidden md:block cursor-pointer"
-                  onClick={logoutHandler}
+                  onClick={() => setLogoutDialogOpen(true)}
                 >
                   Logout
                 </Button>
+                <Dialog open={logoutDialogOpen} onOpenChange={setLogoutDialogOpen}>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Confirm Logout</DialogTitle>
+                      <DialogDescription>
+                        Are you sure you want to log out from your account?
+                      </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => setLogoutDialogOpen(false)}>Cancel</Button>
+                      <Button onClick={handleLogoutConfirmed}>Logout</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </div>
             ) : (
               <div className="ml-7 mt-2  md:flex gap-5 hidden ">

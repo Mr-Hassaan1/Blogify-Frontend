@@ -25,15 +25,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 function YourBlog() {
   const navigate = useNavigate();
@@ -212,18 +211,25 @@ function YourBlog() {
         </Card>
       </div>
 
-      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Blog?</AlertDialogTitle>
-            <AlertDialogDescription>
+      <Dialog
+        open={!!deleteId}
+        onOpenChange={(open) => {
+          if (!open) setDeleteId(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Blog?</DialogTitle>
+            <DialogDescription>
               You’re about to delete this Blog. This action cannot be reversed.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
+            </DialogDescription>
+          </DialogHeader>
 
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteId(null)}>
+              Cancel
+            </Button>
+            <Button
               className="bg-red-600"
               onClick={() => {
                 deleteBlog(deleteId);
@@ -231,36 +237,40 @@ function YourBlog() {
               }}
             >
               Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-      <AlertDialog
+      <Dialog
         open={!!publishData}
-        onOpenChange={() => setPublishData(null)}
+        onOpenChange={(open) => {
+          if (!open) setPublishData(null);
+        }}
       >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Unpublish Blog?</AlertDialogTitle>
-            <AlertDialogDescription>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Unpublish Blog?</DialogTitle>
+            <DialogDescription>
               This blog will become a draft and will not be visible to users.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
+            </DialogDescription>
+          </DialogHeader>
 
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPublishData(null)}>
+              Cancel
+            </Button>
+            <Button
               onClick={() => {
                 togglePublish(publishData.id, publishData.value);
                 setPublishData(null);
               }}
             >
               Unpublish
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

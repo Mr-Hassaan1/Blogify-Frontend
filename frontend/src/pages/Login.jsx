@@ -11,7 +11,7 @@ import axios from "axios";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading, setUser } from "../Redux/authSlice";
@@ -19,7 +19,7 @@ import { loginSchema, validateField } from "../lib/validationSchemas";
 import ValidationMessage from "../components/ValidationMessage";
 
 function Login() {
-  const { loading } = useSelector((store) => store.auth);
+  const { loading, user } = useSelector((store) => store.auth);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -87,6 +87,10 @@ function Login() {
       dispatch(setLoading(false));
     }
   };
+
+  if (user) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <div className="flex w-full h-screen overflow-hidden">

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import userLogo from "../assets/user.jpg";
 import { Textarea } from "./ui/textarea";
 import { FaHeart, FaRegHeart } from "react-icons/fa6";
 import { Button } from "./ui/button";
@@ -17,15 +18,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const CommentBox = ({ selectedBlog }) => {
   const { user } = useSelector((store) => store.auth);
@@ -178,7 +177,7 @@ const CommentBox = ({ selectedBlog }) => {
     <div>
       <div className="flex gap-4 mb-4 items-center">
         <Avatar>
-          <AvatarImage src={user.photoUrl} />
+          <AvatarImage src={user.photoUrl || userLogo} />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
         <h3 className="font-semibold">
@@ -204,7 +203,7 @@ const CommentBox = ({ selectedBlog }) => {
                 <div className="flex items-center justify-between">
                   <div className="flex gap-3 items-start">
                     <Avatar>
-                      <AvatarImage src={item?.userId?.photoUrl} />
+                      <AvatarImage src={item?.userId?.photoUrl || userLogo} />
                       <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
                     <div className="mb-2 space-y-1 md:w-100">
@@ -296,21 +295,26 @@ const CommentBox = ({ selectedBlog }) => {
           })}
         </div>
       ) : null}
-      <AlertDialog
+      <Dialog
         open={!!deleteCommentId}
-        onOpenChange={() => setDeleteCommentId(null)}
+        onOpenChange={(open) => {
+          if (!open) setDeleteCommentId(null);
+        }}
       >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Comment?</AlertDialogTitle>
-            <AlertDialogDescription>
-                You’re about to delete this comment. This action cannot be reversed.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Comment?</DialogTitle>
+            <DialogDescription>
+              You’re about to delete this comment. This action cannot be
+              reversed.
+            </DialogDescription>
+          </DialogHeader>
 
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteCommentId(null)}>
+              Cancel
+            </Button>
+            <Button
               className="bg-red-600"
               onClick={() => {
                 deleteComment(deleteCommentId);
@@ -318,10 +322,10 @@ const CommentBox = ({ selectedBlog }) => {
               }}
             >
               Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
