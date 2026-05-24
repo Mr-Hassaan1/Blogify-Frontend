@@ -21,7 +21,7 @@ export default function Comments() {
   const getTotalComments = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:3200/api/v1/comment/my-blogs/comments`,
+        `https://blogify-backend-lemon.vercel.app/api/v1/comment/my-blogs/comments`,
         { withCredentials: true },
       );
       if (res.data.success) {

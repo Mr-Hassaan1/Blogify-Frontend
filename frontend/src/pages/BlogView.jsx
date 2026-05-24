@@ -42,7 +42,7 @@ const BlogView = () => {
     try {
       const action = liked ? "dislike" : "like";
       const res = await axios.get(
-        `http://localhost:3200/api/v1/blog/${selectedBlog?._id}/${action}`,
+        `https://blogify-backend-lemon.vercel.app/api/v1/blog/${selectedBlog?._id}/${action}`,
         { withCredentials: true },
       );
       if (res.data.success) {

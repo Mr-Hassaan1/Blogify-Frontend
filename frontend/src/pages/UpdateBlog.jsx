@@ -111,8 +111,8 @@ const UpdateBlog = () => {
     try {
       setLoading(true);
       const url = isCreateMode
-        ? `http://localhost:3200/api/v1/blog/`
-        : `http://localhost:3200/api/v1/blog/${id}`;
+        ? `https://blogify-backend-lemon.vercel.app/api/v1/blog/`
+        : `https://blogify-backend-lemon.vercel.app/api/v1/blog/${id}`;
       const method = isCreateMode ? axios.post : axios.put;
       const res = await method(url, formData, {
         headers: {
@@ -168,7 +168,7 @@ const UpdateBlog = () => {
 
     try {
       const res = await axios.delete(
-        `http://localhost:3200/api/v1/blog/delete/${id}`,
+        `https://blogify-backend-lemon.vercel.app/api/v1/blog/delete/${id}`,
         { withCredentials: true },
       );
       if (res.data.success) {

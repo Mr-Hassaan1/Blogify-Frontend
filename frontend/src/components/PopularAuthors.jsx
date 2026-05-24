@@ -8,7 +8,7 @@ const PopularAuthors = () => {
   const getAllUsers = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:3200/api/v1/user/all-users`,
+        `https://blogify-backend-lemon.vercel.app/api/v1/user/all-users`,
       );
       if (res.data.success) {
         setPopularUser(res.data.users);

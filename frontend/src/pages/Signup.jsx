@@ -65,7 +65,7 @@ function Signup() {
     try {
       dispatch(setLoading(true));
       const res = await axios.post(
-        "http://localhost:3200/api/v1/user/register",
+        "https://blogify-backend-lemon.vercel.app/api/v1/user/register",
         userData,
         {
           headers: {
