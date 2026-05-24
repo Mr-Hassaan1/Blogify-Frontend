@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   Breadcrumb,
-  // BreadcrumbEllipsis,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
@@ -11,10 +10,9 @@ import {
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Bookmark, Heart, MessageSquare, Share2 } from "lucide-react";
+import { Bookmark, MessageSquare, Share2 } from "lucide-react";
 import CommentBox from "@/components/CommentBox";
 import axios from "axios";
 import { FaHeart, FaRegHeart } from "react-icons/fa6";
@@ -39,7 +37,7 @@ const BlogView = () => {
     try {
       const action = liked ? "dislike" : "like";
       const res = await axios.get(
-        `https://mern-blog-ha28.onrender.com/api/v1/blog/${selectedBlog?._id}/${action}`,
+        `https://blogify-backend-lemon.vercel.app/api/v1/blog/${selectedBlog?._id}/${action}`,
         { withCredentials: true },
       );
       if (res.data.success) {
