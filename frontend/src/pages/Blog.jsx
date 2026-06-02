@@ -13,7 +13,7 @@ const Blog = () => {
     const getAllPublishedBlogs = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:3200/api/v1/blog//get-published-blogs`,
+          `http://localhost:3200/api/v1/blog/get-published-blogs`,
           { withCredentials: true },
         );
         if (res.data.success) {
