@@ -50,7 +50,7 @@ const CommentBox = ({ selectedBlog }) => {
     const getAllCommentsOfBlog = async () => {
       try {
         const res = await axios.get(
-          `https://blogify-backendpk.vercel.app/api/v1/comment/${selectedBlog._id}/comment/all`,
+          `/comment/${selectedBlog._id}/comment/all`,
         );
 
         if (!cancelled) {
@@ -75,7 +75,7 @@ const CommentBox = ({ selectedBlog }) => {
   const commentHandler = async () => {
     try {
       const res = await axios.post(
-        `https://blogify-backendpk.vercel.app/api/v1/comment/${selectedBlog._id}/create`,
+        `/comment/${selectedBlog._id}/create`,
         { content },
         {
           headers: {
@@ -110,7 +110,7 @@ const CommentBox = ({ selectedBlog }) => {
   const deleteComment = async (commentId) => {
     try {
       const res = await axios.delete(
-        `https://blogify-backendpk.vercel.app/api/v1/comment/${commentId}/delete`,
+        `/comment/${commentId}/delete`,
         {
           withCredentials: true,
         },
@@ -138,7 +138,7 @@ const CommentBox = ({ selectedBlog }) => {
   const editCommentHandler = async (commentId) => {
     try {
       const res = await axios.put(
-        `https://blogify-backendpk.vercel.app/api/v1/comment/${commentId}/edit`,
+        `/comment/${commentId}/edit`,
         { content: editedContent },
         {
           withCredentials: true,
@@ -195,7 +195,7 @@ const CommentBox = ({ selectedBlog }) => {
 
     try {
       const res = await axios.get(
-        `https://blogify-backendpk.vercel.app/api/v1/comment/${commentId}/like`,
+        `/comment/${commentId}/like`,
         {
           withCredentials: true,
         },

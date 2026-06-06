@@ -68,7 +68,7 @@ const BlogView = () => {
     try {
       const action = previousLiked ? "dislike" : "like";
       const res = await axios.get(
-        `https://blogify-backendpk.vercel.app/api/v1/blog/${selectedBlog?._id}/${action}`,
+        `/blog/${selectedBlog?._id}/${action}`,
         { withCredentials: true },
       );
 
@@ -122,7 +122,7 @@ const BlogView = () => {
       setLoading(true);
       try {
         const res = await axios.get(
-          `https://blogify-backendpk.vercel.app/api/v1/blog/${blogId}`,
+          `/blog/${blogId}`,
           { withCredentials: true },
         );
 

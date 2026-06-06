@@ -17,7 +17,7 @@ const TotalProperty = () => {
       const getOwnBlog = async () => {
         try {
           const res = await axios.get(
-            `https://blogify-backendpk.vercel.app/api/v1/blog/get-own-blogs`,
+            `/blog/get-own-blogs`,
             { withCredentials: true },
           );
           if (res.data.success) {
@@ -31,7 +31,7 @@ const TotalProperty = () => {
       const getTotalComments = async () => {
         try {
           const res = await axios.get(
-            `https://blogify-backendpk.vercel.app/api/v1/comment/my-blogs/comments`,
+            `/comment/my-blogs/comments`,
             { withCredentials: true },
           );
           if (res.data.success) {
@@ -45,7 +45,7 @@ const TotalProperty = () => {
       const getTotalLikes = async () => {
         try {
           const res = await axios.get(
-            `https://blogify-backendpk.vercel.app/api/v1/blog/my-blogs/likes`,
+            `/blog/my-blogs/likes`,
             { withCredentials: true },
           );
           if (res.data.success) {

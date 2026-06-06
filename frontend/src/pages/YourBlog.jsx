@@ -45,7 +45,7 @@ function YourBlog() {
       setLoading(true);
       try {
         const res = await axios.get(
-          `https://blogify-backendpk.vercel.app/api/v1/blog/get-own-blogs`,
+          `/blog/get-own-blogs`,
           { withCredentials: true },
         );
 
@@ -72,7 +72,7 @@ function YourBlog() {
   const togglePublish = async (id, publish) => {
     try {
       const res = await axios.patch(
-        `https://blogify-backendpk.vercel.app/api/v1/blog/${id}?isPublished=${publish}`,
+        `/blog/${id}?isPublished=${publish}`,
         null,
         { withCredentials: true },
       );
@@ -96,7 +96,7 @@ function YourBlog() {
   const deleteBlog = async (id) => {
     try {
       const res = await axios.delete(
-        `https://blogify-backendpk.vercel.app/api/v1/blog/delete/${id}`,
+        `/blog/delete/${id}`,
         { withCredentials: true },
       );
       if (res.data.success) {
