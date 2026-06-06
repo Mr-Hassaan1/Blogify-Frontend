@@ -63,6 +63,7 @@ function Navbar() {
       });
 
       if (res.data.success) {
+        localStorage.removeItem("accessToken");
         navigate("/login");
         dispatch(setUser(null));
         dispatch(resetBlog());

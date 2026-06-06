@@ -26,6 +26,7 @@ function AuthProviderGate() {
         }
       } catch {
         if (mounted) {
+          localStorage.removeItem("accessToken");
           dispatch(setUser(null));
         }
       } finally {
