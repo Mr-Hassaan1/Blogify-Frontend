@@ -12,7 +12,7 @@ const PopularAuthors = () => {
     const getAllUsers = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:3200/api/v1/user/all-users`,
+          `blogify-backendpk.vercel.app/api/v1/user/all-users`,
         );
 
         if (active && res.data.success) {

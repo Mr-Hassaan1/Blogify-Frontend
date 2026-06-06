@@ -56,7 +56,7 @@ const UpdateBlog = () => {
 
     const fetchBlog = async () => {
       try {
-        const res = await axios.get(`http://localhost:3200/api/v1/blog/${id}`, {
+        const res = await axios.get(`blogify-backendpk.vercel.app/api/v1/blog/${id}`, {
           withCredentials: true,
         });
 
@@ -143,8 +143,8 @@ const UpdateBlog = () => {
     try {
       setLoading(true);
       const url = isCreateMode
-        ? `http://localhost:3200/api/v1/blog/`
-        : `http://localhost:3200/api/v1/blog/${id}`;
+        ? `blogify-backendpk.vercel.app/api/v1/blog/`
+        : `blogify-backendpk.vercel.app/api/v1/blog/${id}`;
       const method = isCreateMode ? axios.post : axios.put;
       const res = await method(url, formData, {
         headers: {
@@ -200,7 +200,7 @@ const UpdateBlog = () => {
 
     try {
       const res = await axios.delete(
-        `http://localhost:3200/api/v1/blog/delete/${id}`,
+        `blogify-backendpk.vercel.app/api/v1/blog/delete/${id}`,
         { withCredentials: true },
       );
       if (res.data.success) {
