@@ -76,7 +76,7 @@ function Profile() {
     try {
       setLoading(true);
       const res = await axios.put(
-        `blogify-backendpk.vercel.app/api/v1/user/profile/update`,
+        `https://blogify-backendpk.vercel.app/api/v1/user/profile/update`,
         formData,
         {
           headers: {

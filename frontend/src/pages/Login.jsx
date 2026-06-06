@@ -63,7 +63,7 @@ function Login() {
     try {
       dispatch(setLoading(true));
       const res = await axios.post(
-        "blogify-backendpk.vercel.app/api/v1/user/login",
+        "https://blogify-backendpk.vercel.app/api/v1/user/login",
         inputFields,
         {
           headers: {

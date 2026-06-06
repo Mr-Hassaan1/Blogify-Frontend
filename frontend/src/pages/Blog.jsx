@@ -15,7 +15,7 @@ const Blog = () => {
       dispatch(setLoading(true));
       try {
         const res = await axios.get(
-          `blogify-backendpk.vercel.app/api/v1/blog/get-published-blogs`,
+          `https://blogify-backendpk.vercel.app/api/v1/blog/get-published-blogs`,
           { withCredentials: true },
         );
         if (res.data.success) {

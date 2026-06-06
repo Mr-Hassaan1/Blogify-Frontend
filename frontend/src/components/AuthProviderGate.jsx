@@ -14,7 +14,7 @@ function AuthProviderGate() {
 
     const restoreSession = async () => {
       try {
-        const res = await axios.get("blogify-backendpk.vercel.app/api/v1/user/me", {
+        const res = await axios.get("https://blogify-backendpk.vercel.app/api/v1/user/me", {
           withCredentials: true,
         });
 
