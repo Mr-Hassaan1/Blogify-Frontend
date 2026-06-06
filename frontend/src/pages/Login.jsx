@@ -74,9 +74,7 @@ function Login() {
       );
 
       if (res.data.success) {
-        if (res.data.token) {
-          localStorage.setItem("accessToken", res.data.token);
-        }
+        localStorage.removeItem("accessToken");
 
         navigate("/");
         dispatch(setUser(res.data.user));

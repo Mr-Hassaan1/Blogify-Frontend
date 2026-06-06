@@ -64,13 +64,17 @@ function Navbar() {
 
       if (res.data.success) {
         localStorage.removeItem("accessToken");
-        navigate("/login");
         dispatch(setUser(null));
         dispatch(resetBlog());
-        toast.success(res.data.message);
+        navigate("/login", { replace: true });
+        toast.success(res.data.message || "Logged out successfully.");
+        return;
       }
     } catch (error) {
-      console.log(error);
+      localStorage.removeItem("accessToken");
+      dispatch(setUser(null));
+      dispatch(resetBlog());
+      navigate("/login", { replace: true });
       toast.error(
         error.response?.data?.message || error.message || "Logout failed",
       );
