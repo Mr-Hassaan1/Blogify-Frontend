@@ -63,7 +63,7 @@ function Login() {
     try {
       dispatch(setLoading(true));
       const res = await axios.post(
-        "https://blogify-backendpk.vercel.app/api/v1/user/login",
+        "/user/login",
         inputFields,
         {
           headers: {
@@ -74,7 +74,9 @@ function Login() {
       );
 
       if (res.data.success) {
-        localStorage.removeItem("accessToken");
+        if (res.data.token) {
+          localStorage.setItem("accessToken", res.data.token);
+        }
 
         navigate("/");
         dispatch(setUser(res.data.user));

@@ -14,7 +14,10 @@ function AuthProviderGate() {
 
     const restoreSession = async () => {
       try {
+        const token = localStorage.getItem("accessToken");
+
         const res = await axios.get("/user/me", {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
           withCredentials: true,
         });
 

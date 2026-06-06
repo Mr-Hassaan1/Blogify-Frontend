@@ -8,7 +8,21 @@ import ThemeProvider from "./components/ThemeProvider";
 import AuthProviderGate from "./components/AuthProviderGate";
 
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = "https://blogify-backendpk.vercel.app/api/v1";
+axios.defaults.baseURL =
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.DEV
+    ? "http://localhost:3200/api/v1"
+    : "https://blogify-backendpk.vercel.app/api/v1");
+
+axios.interceptors.request.use((config) => {
+  const token = localStorage.getItem("accessToken");
+
+  if (token && !config.headers.Authorization) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+});
 
 createRoot(document.getElementById("root")).render(
   <Provider store={store}>

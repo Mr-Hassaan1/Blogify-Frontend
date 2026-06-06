@@ -58,7 +58,7 @@ function Navbar() {
 
   const logoutHandler = async () => {
     try {
-      const res = await axios.get("https://blogify-backendpk.vercel.app/api/v1/user/logout", {
+      const res = await axios.get("/user/logout", {
         withCredentials: true,
       });
 
