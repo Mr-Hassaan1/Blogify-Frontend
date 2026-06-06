@@ -57,24 +57,21 @@ function Navbar() {
   };
 
   const logoutHandler = async () => {
+    localStorage.removeItem("accessToken");
+    dispatch(setUser(null));
+    dispatch(resetBlog());
+    navigate("/login", { replace: true });
+
     try {
       const res = await axios.get("/user/logout", {
         withCredentials: true,
       });
 
       if (res.data.success) {
-        localStorage.removeItem("accessToken");
-        dispatch(setUser(null));
-        dispatch(resetBlog());
-        navigate("/login", { replace: true });
         toast.success(res.data.message || "Logged out successfully.");
         return;
       }
     } catch (error) {
-      localStorage.removeItem("accessToken");
-      dispatch(setUser(null));
-      dispatch(resetBlog());
-      navigate("/login", { replace: true });
       toast.error(
         error.response?.data?.message || error.message || "Logout failed",
       );
