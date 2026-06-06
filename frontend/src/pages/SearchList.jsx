@@ -9,8 +9,6 @@ function SearchList() {
   const query = params.get("q");
   const { blog } = useSelector((store) => store.blog);
 
-  console.log(blog);
-
   const filteredBlogs = (blog || []).filter(
     (b) =>
       b.title.toLowerCase().includes(query.toLowerCase()) ||

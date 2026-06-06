@@ -8,9 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { setBlog } from "@/Redux/blogSlice";
 import { CloudOff, Edit, Globe, Trash2 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
@@ -33,34 +31,40 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function YourBlog() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { blog } = useSelector((store) => store.blog);
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState(null);
   const [publishData, setPublishData] = useState(null);
 
   useEffect(() => {
     const getOwnBlog = async () => {
+      setLoading(true);
       try {
         const res = await axios.get(
           `http://localhost:3200/api/v1/blog/get-own-blogs`,
           { withCredentials: true },
         );
+
         if (res.data.success) {
-          dispatch(setBlog(res.data.blogs));
+          setBlogs(res.data.blogs || []);
         }
       } catch (error) {
         console.log(error);
+        toast.error(error.response?.data?.message || "Failed to load your blogs.");
+      } finally {
+        setLoading(false);
       }
     };
 
     getOwnBlog();
-  }, [dispatch]);
+  }, []);
 
   const dateHandler = (index) => {
-    const date = new Date(blog[index].createdAt);
+    const date = new Date(blogs[index].createdAt);
     const localDate = date.toLocaleDateString();
     return localDate;
   };
@@ -73,12 +77,12 @@ function YourBlog() {
         { withCredentials: true },
       );
       if (res.data.success) {
-        const updatedBlogData = blog.map((blogItem) =>
+        const updatedBlogData = blogs.map((blogItem) =>
           blogItem._id === id
             ? { ...blogItem, isPublished: publish }
             : blogItem,
         );
-        dispatch(setBlog(updatedBlogData));
+        setBlogs(updatedBlogData);
         toast.success(res.data.message);
       }
     } catch (error) {
@@ -96,8 +100,8 @@ function YourBlog() {
         { withCredentials: true },
       );
       if (res.data.success) {
-        const updatedBlogData = blog.filter((blogItem) => blogItem?._id !== id);
-        dispatch(setBlog(updatedBlogData));
+        const updatedBlogData = blogs.filter((blogItem) => blogItem?._id !== id);
+        setBlogs(updatedBlogData);
         toast.success(res.data.message);
       }
     } catch (error) {
@@ -122,7 +126,28 @@ function YourBlog() {
               </TableRow>
             </TableHeader>
             <TableBody className="overflow-x-auto ">
-              {blog?.map((item, index) => (
+              {loading ? (
+                Array.from({ length: 4 }).map((_, rowIndex) => (
+                  <TableRow key={rowIndex}>
+                    <TableCell className="py-4">
+                      <Skeleton className="h-4 w-32" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-20" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-6 w-16 rounded-full" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-16" />
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Skeleton className="mx-auto h-6 w-6 rounded-full" />
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                blogs?.map((item, index) => (
                 <TableRow key={index}>
                   <TableCell className="flex gap-4 items-center">
                     <img
@@ -205,7 +230,8 @@ function YourBlog() {
                     </DropdownMenu>
                   </TableCell>
                 </TableRow>
-              ))}
+                ))
+              )}
             </TableBody>
           </Table>
         </Card>

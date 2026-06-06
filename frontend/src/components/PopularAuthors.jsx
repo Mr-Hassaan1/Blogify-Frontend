@@ -5,24 +5,33 @@ import userLogo from "../assets/user.jpg";
 
 const PopularAuthors = () => {
   const [popularUser, setPopularUser] = useState([]);
-  const getAllUsers = async () => {
-    try {
-      const res = await axios.get(
-        `http://localhost:3200/api/v1/user/all-users`,
-      );
-      if (res.data.success) {
-        setPopularUser(res.data.users);
-      }
-    } catch (error) {
-      toast.error(
-        error.response?.data?.message ||
-          error.message ||
-          "Failed to load authors.",
-      );
-    }
-  };
+
   useEffect(() => {
+    let active = true;
+
+    const getAllUsers = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:3200/api/v1/user/all-users`,
+        );
+
+        if (active && res.data.success) {
+          setPopularUser(res.data.users);
+        }
+      } catch (error) {
+        toast.error(
+          error.response?.data?.message ||
+            error.message ||
+            "Failed to load authors.",
+        );
+      }
+    };
+
     getAllUsers();
+
+    return () => {
+      active = false;
+    };
   }, []);
   return (
     <div>

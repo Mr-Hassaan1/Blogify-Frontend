@@ -2,12 +2,13 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import BlogCardList from "./BlogCardList";
 import { useNavigate } from "react-router-dom";
-import { setBlog } from "@/Redux/blogSlice";
+import { setBlog, setLoading } from "@/Redux/blogSlice";
 import axios from "axios";
 import { toast } from "sonner";
 import { Badge } from "./ui/badge";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { Skeleton } from "./ui/skeleton";
 
 const tags = [
   {
@@ -34,12 +35,13 @@ const tags = [
 ];
 
 const RecentBlog = () => {
-  const { blog } = useSelector((store) => store.blog);
+  const { blog, loading } = useSelector((store) => store.blog);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
     const getAllPublishedBlogs = async () => {
+      dispatch(setLoading(true));
       try {
         const res = await axios.get(
           `http://localhost:3200/api/v1/blog/get-published-blogs`,
@@ -50,6 +52,8 @@ const RecentBlog = () => {
         }
       } catch (error) {
         toast.error(error.response?.data?.message || error.message || "Unable to load recent blogs.");
+      } finally {
+        dispatch(setLoading(false));
       }
     };
     getAllPublishedBlogs();
@@ -66,9 +70,21 @@ const RecentBlog = () => {
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8 px-4 md:px-0">
         <div className="flex-1">
           <div className="space-y-6">
-            {blog?.slice(0, 4)?.map((blog, index) => {
-              return <BlogCardList key={index} blog={blog} />;
-            })}
+            {loading
+              ? Array.from({ length: 4 }).map((_, index) => (
+                  <div key={index} className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-600 dark:bg-gray-700">
+                    <div className="flex flex-col gap-6 md:flex-row">
+                      <Skeleton className="h-56 w-full rounded-3xl md:w-72" />
+                      <div className="flex-1 space-y-3">
+                        <Skeleton className="h-6 w-2/3" />
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-5/6" />
+                        <Skeleton className="h-10 w-28" />
+                      </div>
+                    </div>
+                  </div>
+                ))
+              : blog?.slice(0, 4)?.map((blogItem, index) => <BlogCardList key={index} blog={blogItem} />)}
           </div>
         </div>
 

@@ -29,37 +29,69 @@ const UpdateBlog = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { blog } = useSelector((store) => store.blog);
-  const selectBlog = id ? blog.find((item) => item._id === id) : null;
+
+  const cachedBlog = id ? blog.find((item) => item?._id === id) : null;
 
   const [loading, setLoading] = useState(false);
-  const [blogData, setBlogData] = useState({
-    title: "",
-    subtitle: "",
-    category: "",
-    thumbnail: null,
-  });
+  const [blogData, setBlogData] = useState(() =>
+    cachedBlog
+      ? {
+          title: cachedBlog.title || "",
+          subtitle: cachedBlog.subtitle || "",
+          category: cachedBlog.category || "",
+          thumbnail: cachedBlog.thumbnail || null,
+        }
+      : { title: "", subtitle: "", category: "", thumbnail: null },
+  );
   const [errors, setErrors] = useState({});
-  const [content, setContent] = useState("");
-  const [previewThumbnail, setPreviewThumbnail] = useState("");
+  const [content, setContent] = useState(() => cachedBlog?.description || "");
+  const [previewThumbnail, setPreviewThumbnail] = useState(() => cachedBlog?.thumbnail || "");
 
   useEffect(() => {
-    if (selectBlog) {
-      setBlogData({
-        title: selectBlog.title || "",
-        subtitle: selectBlog.subtitle || "",
-        category: selectBlog.category || "",
-        thumbnail: selectBlog.thumbnail || null,
-      });
-      setContent(selectBlog.description || "");
-      setPreviewThumbnail(selectBlog.thumbnail || "");
+    if (isCreateMode || cachedBlog) {
+      return;
     }
 
-    if (isCreateMode) {
-      setBlogData({ title: "", subtitle: "", category: "", thumbnail: null });
-      setContent("");
-      setPreviewThumbnail("");
-    }
-  }, [selectBlog, isCreateMode]);
+    let ignore = false;
+
+    const fetchBlog = async () => {
+      try {
+        const res = await axios.get(`http://localhost:3200/api/v1/blog/${id}`, {
+          withCredentials: true,
+        });
+
+        if (res.data.success && !ignore) {
+          const fetchedBlog = res.data.blog;
+
+          setBlogData({
+            title: fetchedBlog.title || "",
+            subtitle: fetchedBlog.subtitle || "",
+            category: fetchedBlog.category || "",
+            thumbnail: fetchedBlog.thumbnail || null,
+          });
+          setContent(fetchedBlog.description || "");
+          setPreviewThumbnail(fetchedBlog.thumbnail || "");
+
+          dispatch(
+            setBlog(
+              Array.isArray(blog)
+                ? [...blog.filter((item) => item?._id !== fetchedBlog._id), fetchedBlog]
+                : [fetchedBlog],
+            ),
+          );
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error(error.response?.data?.message || "Failed to load blog details.");
+      }
+    };
+
+    fetchBlog();
+
+    return () => {
+      ignore = true;
+    };
+  }, [cachedBlog, dispatch, id, isCreateMode, blog]);
 
   const handleChange = async (e) => {
     const { name, value } = e.target;

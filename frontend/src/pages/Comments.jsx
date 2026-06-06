@@ -35,7 +35,6 @@ export default function Comments() {
   useEffect(() => {
     setTimeout(() => getTotalComments(), 0);
   }, []);
-  console.log(allComments);
 
   return (
     <div className="pb-10 pt-20 md:ml-80 h-screen">

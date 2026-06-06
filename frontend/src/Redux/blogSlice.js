@@ -12,10 +12,14 @@ const blogSlice = createSlice({
         },
         setBlog: (state, action) => {
             state.blog = action.payload
+        },
+        resetBlog: (state) => {
+            state.blog = [];
+            state.loading = false;
         }
 
     }
 })
 
-export const { setLoading, setBlog } = blogSlice.actions
+export const { setLoading, setBlog, resetBlog } = blogSlice.actions
 export default blogSlice.reducer

@@ -45,18 +45,31 @@ const CommentBox = ({ selectedBlog }) => {
   };
 
   useEffect(() => {
+    let cancelled = false;
+
     const getAllCommentsOfBlog = async () => {
       try {
         const res = await axios.get(
           `http://localhost:3200/api/v1/comment/${selectedBlog._id}/comment/all`,
         );
-        const data = res.data.comments;
-        dispatch(setComment(data));
-      } catch (error) {
-        console.log(error);
+
+        if (!cancelled) {
+          dispatch(setComment(res.data.comments || []));
+        }
+      } catch {
+        if (!cancelled) {
+          toast.error("Failed to load comments");
+        }
       }
     };
-    if (selectedBlog?._id) getAllCommentsOfBlog();
+
+    if (selectedBlog?._id) {
+      getAllCommentsOfBlog();
+    }
+
+    return () => {
+      cancelled = true;
+    };
   }, [selectedBlog?._id, dispatch]);
 
   const commentHandler = async () => {
@@ -73,7 +86,6 @@ const CommentBox = ({ selectedBlog }) => {
       );
       if (res.data.success) {
         let updatedCommentData;
-        console.log(comment);
 
         if (comment.length >= 1) {
           updatedCommentData = [...comment, res.data.comment];
@@ -88,12 +100,10 @@ const CommentBox = ({ selectedBlog }) => {
             : p,
         );
         dispatch(setBlog(updatedBlogData));
-        toast.success(res.data.message);
         setContent("");
       }
-    } catch (error) {
-      console.log(error);
-      toast.error("Comment not added");
+    } catch (error) {      console.log(error);
+
     }
   };
 
@@ -109,13 +119,15 @@ const CommentBox = ({ selectedBlog }) => {
         const updatedCommentData = comment.filter(
           (item) => item._id !== commentId,
         );
-        console.log(updatedCommentData);
+
         dispatch(setComment(updatedCommentData));
+
         const updatedBlogData = blog.map((p) =>
-          p._id === selectedBlog._id ? { ...p, comments: updatedCommentData } : p,
+          p._id === selectedBlog._id
+            ? { ...p, comments: updatedCommentData }
+            : p,
         );
         dispatch(setBlog(updatedBlogData));
-        toast.success(res.data.message);
       }
     } catch (error) {
       console.log(error);
@@ -141,7 +153,6 @@ const CommentBox = ({ selectedBlog }) => {
           item._id === commentId ? { ...item, content: editedContent } : item,
         );
         dispatch(setComment(updatedCommentData));
-        toast.success(res.data.message);
         setEditingCommentId(null);
         setEditedContent("");
       }
@@ -152,6 +163,36 @@ const CommentBox = ({ selectedBlog }) => {
   };
 
   const likeCommentHandler = async (commentId) => {
+    if (!user) {
+      return;
+    }
+
+    const previousCommentList = [...comment];
+    const currentComment = comment.find((item) => item._id === commentId);
+
+    if (!currentComment) return;
+
+    const alreadyLiked = (currentComment.likes || []).includes(user._id);
+    const optimisticLikeCount =
+      (currentComment.numberOfLikes ?? currentComment.likes?.length ?? 0) +
+      (alreadyLiked ? -1 : 1);
+
+    const optimisticComment = {
+      ...currentComment,
+      likes: alreadyLiked
+        ? (currentComment.likes || []).filter((id) => id !== user._id)
+        : [...new Set([...(currentComment.likes || []), user._id])],
+      numberOfLikes: Math.max(0, optimisticLikeCount),
+    };
+
+    dispatch(
+      setComment(
+        comment.map((item) =>
+          item._id === commentId ? optimisticComment : item,
+        ),
+      ),
+    );
+
     try {
       const res = await axios.get(
         `http://localhost:3200/api/v1/comment/${commentId}/like`,
@@ -160,19 +201,25 @@ const CommentBox = ({ selectedBlog }) => {
         },
       );
 
-      if (res.data.success) {
-        const updatedComment = res.data.updatedComment;
-
-        const updatedCommentList = comment.map((item) =>
-          item._id === commentId ? updatedComment : item,
-        );
-
-        dispatch(setComment(updatedCommentList));
-        toast.success(res.data.message);
+      if (!res.data.success) {
+        throw new Error(res.data.message || "Unable to update comment like.");
       }
+
+      dispatch(
+        setComment(
+          comment.map((item) =>
+            item._id === commentId ? res.data.updatedComment : item,
+          ),
+        ),
+      );
     } catch (error) {
+      dispatch(setComment(previousCommentList));
       console.error("Error liking comment", error);
-      toast.error("Something went wrong");
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Something went wrong",
+      );
     }
   };
 
@@ -200,9 +247,9 @@ const CommentBox = ({ selectedBlog }) => {
       </div>
       {comment.length > 0 ? (
         <div className="mt-7 bg-gray-100 dark:bg-gray-800 p-5 rounded-md">
-          {comment.map((item) => {
+          {comment.map((item, index) => {
             return (
-              <div key={item._id} className="mb-4">
+              <div key={index} className="mb-4">
                 <div className="flex items-center justify-between">
                   <div className="flex gap-3 items-start">
                     <Avatar>
@@ -255,12 +302,14 @@ const CommentBox = ({ selectedBlog }) => {
                             className="flex gap-1 items-center cursor-pointer"
                             onClick={() => likeCommentHandler(item._id)}
                           >
-                            {item.likes.includes(user._id) ? (
+                            {(item.likes || []).includes(user?._id) ? (
                               <FaHeart fill="red" />
                             ) : (
                               <FaRegHeart />
                             )}
-                            <span>{item.numberOfLikes}</span>
+                            <span>
+                              {item.numberOfLikes ?? item.likes?.length ?? 0}
+                            </span>
                           </div>
                         </div>
                       </div>

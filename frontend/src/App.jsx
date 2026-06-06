@@ -68,25 +68,6 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/create-blog",
-    element: (
-      <>
-        <Navbar />
-        <UpdateBlog />
-      </>
-    ),
-  },
-
-  {
-    path: "/profile",
-    element: (
-      <>
-        <Navbar />
-        <Profile />
-      </>
-    ),
-  },
-  {
     path: "/dashboard",
     element: (
       <>

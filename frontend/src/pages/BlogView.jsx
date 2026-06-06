@@ -10,9 +10,10 @@ import {
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import userLogo from "../assets/user.jpg" 
+import userLogo from "../assets/user.jpg";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Bookmark, MessageSquare, Share2 } from "lucide-react";
 import CommentBox from "@/components/CommentBox";
 import axios from "axios";
@@ -25,47 +26,62 @@ const BlogView = () => {
   const blogId = params.blogId;
   const { blog } = useSelector((store) => store.blog);
   const { user } = useSelector((store) => store.auth);
-  const selectedBlog = blog.find((blog) => blog._id === blogId);
-  const [blogLike, setBlogLike] = useState(selectedBlog?.likes.length);
   const { comment } = useSelector((store) => store.comment);
-  const [liked, setLiked] = useState(
-    selectedBlog?.likes.includes(user?._id) || false,
-  );
 
+  const cachedBlog = blog.find((item) => item._id === blogId) || null;
+  const [blogData, setBlogData] = useState(() => cachedBlog || null);
+  const [loading, setLoading] = useState(() => !cachedBlog);
   const [bookmarked, setBookmarked] = useState(false);
   const [showComments, setShowComments] = useState(false);
 
   const dispatch = useDispatch();
-  console.log(selectedBlog);
+
+                                                                                                                                                   const selectedBlog = cachedBlog || blogData;
+  const liked = selectedBlog?.likes?.includes(user?._id) || false;
+  const blogLike = selectedBlog?.likes?.length || 0;
+  const commentCount =
+    comment.length > 0
+      ? comment.length
+      : selectedBlog?.comments?.length || 0;
 
   const likeOrDislikeHandler = async () => {
+    if (!selectedBlog || !user) {
+      return;
+    }
+
+    const previousLiked = liked;
+    const previousBlogState = [...blog];
+
+    const optimisticBlogData = blog.map((p) =>
+      p._id === selectedBlog._id
+        ? {
+            ...p,
+            likes: previousLiked
+              ? (p.likes || []).filter((id) => id !== user._id)
+              : [...new Set([...(p.likes || []), user._id])],
+          }
+        : p,
+    );
+
+    dispatch(setBlog(optimisticBlogData));
+
     try {
-      const action = liked ? "dislike" : "like";
+      const action = previousLiked ? "dislike" : "like";
       const res = await axios.get(
         `http://localhost:3200/api/v1/blog/${selectedBlog?._id}/${action}`,
         { withCredentials: true },
       );
-      if (res.data.success) {
-        const updatedLikes = liked ? blogLike - 1 : blogLike + 1;
-        setBlogLike(updatedLikes);
-        setLiked(!liked);
 
-        const updatedBlogData = blog.map((p) =>
-          p._id === selectedBlog._id
-            ? {
-                ...p,
-                likes: liked
-                  ? p.likes.filter((id) => id !== user._id)
-                  : [...p.likes, user._id],
-              }
-            : p,
-        );
-        toast.success(res.data.message);
-        dispatch(setBlog(updatedBlogData));
+      if (!res.data.success) {
+        throw new Error(res.data.message || "Unable to update like status.");
       }
     } catch (error) {
-      console.log(error);
-      toast.error(error.response.data.message);
+      dispatch(setBlog(previousBlogState));
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Something went wrong.",
+      );
     }
   };
 
@@ -99,6 +115,59 @@ const BlogView = () => {
     window.scrollTo(0, 0);
   }, []);
 
+  useEffect(() => {
+    if (!blogId || cachedBlog) return;
+
+    const fetchBlog = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get(
+          `http://localhost:3200/api/v1/blog/${blogId}`,
+          { withCredentials: true },
+        );
+
+        if (res.data.success) {
+          const fetchedBlog = res.data.blog;
+          setBlogData(fetchedBlog);
+          dispatch(setBlog([...blog, fetchedBlog]));
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error(
+          error.response?.data?.message || "Failed to load this blog.",
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlog();
+  }, [blogId, blog, cachedBlog, dispatch]);
+
+  if (loading || !selectedBlog) {
+    return (
+      <div className="pt-20 px-6 pb-10">
+        <div className="mx-auto max-w-6xl space-y-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+          <Skeleton className="h-4 w-32" />
+          <Skeleton className="h-10 w-3/4" />
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-14 w-14 rounded-full" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-40" />
+              <Skeleton className="h-4 w-28" />
+            </div>
+          </div>
+          <Skeleton className="h-80 w-full rounded-xl" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-2/3" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="pt-14">
       <div className="max-w-6xl mx-auto p-10">
@@ -129,7 +198,10 @@ const BlogView = () => {
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center space-x-4">
               <Avatar>
-                <AvatarImage src={selectedBlog.author.photoUrl || userLogo } alt="Author" />
+                <AvatarImage
+                  src={selectedBlog.author.photoUrl || userLogo}
+                  alt="Author"
+                />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
               <div>
@@ -197,7 +269,7 @@ const BlogView = () => {
                 aria-expanded={showComments}
               >
                 <MessageSquare className="h-4 w-4" />
-                <span>{comment.length} Comments</span>
+                <span>{commentCount} Comments</span>
               </Button>
             </div>
             <div className="flex items-center space-x-2">

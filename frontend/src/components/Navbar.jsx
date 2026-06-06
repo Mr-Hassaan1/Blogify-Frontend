@@ -28,12 +28,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { FaMoon, FaRegEdit, FaSun } from "react-icons/fa";
 import { toggleTheme } from "@/Redux/themeSlice";
 import { LiaCommentSolid } from "react-icons/lia";
 import ResponsiveMenu from "./ResponsiveMenu";
+import { resetBlog } from "@/Redux/blogSlice";
 
 function Navbar() {
   const { user } = useSelector((store) => store.auth);
@@ -45,7 +45,7 @@ function Navbar() {
 
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handelSearch = () => {
+  const handleSearch = () => {
     if (searchTerm.trim() !== "") {
       navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
       setSearchTerm("");
@@ -65,6 +65,7 @@ function Navbar() {
       if (res.data.success) {
         navigate("/login");
         dispatch(setUser(null));
+        dispatch(resetBlog());
         toast.success(res.data.message);
       }
     } catch (error) {
@@ -100,7 +101,7 @@ function Navbar() {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="border border-gray-700 dark:border-gray-900 bg-gray-300 w-50 hidden md:block"
             />
-            <Button onClick={handelSearch} className="absolute top-0 right-0">
+            <Button onClick={handleSearch} className="absolute top-0 right-0">
               <Search />
             </Button>
           </div>
@@ -136,7 +137,7 @@ function Navbar() {
           </ul>
           <div className="flex">
             <Button
-              className="h-12 w-10 cursor-pointer"
+              className="h-10 w-10 rounded-4xl cursor-pointer mt-1"
               onClick={() => dispatch(toggleTheme())}
             >
               {theme === "light" ? <FaMoon /> : <FaSun />}
