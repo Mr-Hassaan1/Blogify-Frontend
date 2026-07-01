@@ -1,7 +1,9 @@
+import axios from "axios";
+import JoditEditor from "jodit-react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import ValidationMessage from "@/components/ValidationMessage";
+import { ValidationMessage } from "@/components/common/ValidationMessage";
 import { blogSchema, validateField } from "@/lib/validationSchemas";
 import {
   Select,
@@ -13,15 +15,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import JoditEditor from "jodit-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
 import { toast } from "sonner";
 import { setBlog } from "@/Redux/blogSlice";
 import { useRef, useEffect, useState } from "react";
 
-const UpdateBlog = () => {
+export function CreateUpdateBlogPage() {
   const editor = useRef(null);
   const params = useParams();
   const id = params.blogId;
@@ -45,7 +45,9 @@ const UpdateBlog = () => {
   );
   const [errors, setErrors] = useState({});
   const [content, setContent] = useState(() => cachedBlog?.description || "");
-  const [previewThumbnail, setPreviewThumbnail] = useState(() => cachedBlog?.thumbnail || "");
+  const [previewThumbnail, setPreviewThumbnail] = useState(
+    () => cachedBlog?.thumbnail || "",
+  );
 
   useEffect(() => {
     if (isCreateMode || cachedBlog) {
@@ -75,14 +77,19 @@ const UpdateBlog = () => {
           dispatch(
             setBlog(
               Array.isArray(blog)
-                ? [...blog.filter((item) => item?._id !== fetchedBlog._id), fetchedBlog]
+                ? [
+                    ...blog.filter((item) => item?._id !== fetchedBlog._id),
+                    fetchedBlog,
+                  ]
                 : [fetchedBlog],
             ),
           );
         }
       } catch (error) {
         console.log(error);
-        toast.error(error.response?.data?.message || "Failed to load blog details.");
+        toast.error(
+          error.response?.data?.message || "Failed to load blog details.",
+        );
       }
     };
 
@@ -142,9 +149,7 @@ const UpdateBlog = () => {
 
     try {
       setLoading(true);
-      const url = isCreateMode
-        ? `/blog/`
-        : `/blog/${id}`;
+      const url = isCreateMode ? `/blog/` : `/blog/${id}`;
       const method = isCreateMode ? axios.post : axios.put;
       const res = await method(url, formData, {
         headers: {
@@ -199,10 +204,9 @@ const UpdateBlog = () => {
     if (isCreateMode) return;
 
     try {
-      const res = await axios.delete(
-        `/blog/delete/${id}`,
-        { withCredentials: true },
-      );
+      const res = await axios.delete(`/blog/delete/${id}`, {
+        withCredentials: true,
+      });
       if (res.data.success) {
         const updatedBlogData = blog.filter((blogItem) => blogItem?._id !== id);
         dispatch(setBlog(updatedBlogData));
@@ -264,7 +268,11 @@ const UpdateBlog = () => {
               value={content}
               onChange={async (newContent) => {
                 setContent(newContent);
-                const error = await validateField("description", newContent, blogSchema);
+                const error = await validateField(
+                  "description",
+                  newContent,
+                  blogSchema,
+                );
                 setErrors((prevErrors) => ({
                   ...prevErrors,
                   description: error,
@@ -364,6 +372,4 @@ const UpdateBlog = () => {
       </div>
     </div>
   );
-};
-
-export default UpdateBlog;
+}

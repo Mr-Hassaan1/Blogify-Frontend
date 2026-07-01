@@ -1,7 +1,7 @@
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
-const BlogCardList = ({ blog }) => {
+export const BlogCardList = ({ blog }) => {
   const navigate = useNavigate();
 
   return (
@@ -34,5 +34,3 @@ const BlogCardList = ({ blog }) => {
     </div>
   );
 };
-
-export default BlogCardList;

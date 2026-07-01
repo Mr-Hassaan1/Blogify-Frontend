@@ -1,9 +1,9 @@
 import axios from "axios";
+import userLogo from "@/assets/images/user.jpg";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
-import userLogo from "../assets/user.jpg";
 
-const PopularAuthors = () => {
+export const PopularAuthors = () => {
   const [popularUser, setPopularUser] = useState([]);
 
   useEffect(() => {
@@ -63,4 +63,3 @@ const PopularAuthors = () => {
   );
 };
 
-export default PopularAuthors;
