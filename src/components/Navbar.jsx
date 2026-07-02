@@ -1,14 +1,14 @@
+import axios from "axios";
+import Logo from "../assets/images/logo.png";
+import userLogo from "../assets/images/user.jpg";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Input } from "./ui/input";
-import Logo from "../assets/logo.png";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
-import axios from "axios";
 import { setUser } from "@/Redux/authSlice";
-import userLogo from "../assets/user.jpg";
 import { HiMenuAlt1, HiMenuAlt3 } from "react-icons/hi";
 import { ChartColumnBig, LogOut, Search, User } from "lucide-react";
 
@@ -32,10 +32,10 @@ import {
 import { FaMoon, FaRegEdit, FaSun } from "react-icons/fa";
 import { toggleTheme } from "@/Redux/themeSlice";
 import { LiaCommentSolid } from "react-icons/lia";
-import ResponsiveMenu from "./ResponsiveMenu";
+import ResponsiveMenu from "./common/ResponsiveMenu";
 import { resetBlog } from "@/Redux/blogSlice";
 
-function Navbar() {
+export function Navbar() {
   const { user } = useSelector((store) => store.auth);
   const { theme } = useSelector((store) => store.theme);
   const navigate = useNavigate();
@@ -248,4 +248,3 @@ function Navbar() {
   );
 }
 
-export default Navbar;

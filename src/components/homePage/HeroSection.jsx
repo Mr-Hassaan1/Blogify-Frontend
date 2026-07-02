@@ -1,8 +1,8 @@
-import heroImg from "../assets/blog2.png";
-import { Button } from "./ui/button";
+import heroImg from "@/assets/images/blog2.png";
+import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
-const Hero = () => {
+export const HeroSection = () => {
   return (
     <div className="px-4 md:px-0 ">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center h-150 my-10 md:my-0">
@@ -29,7 +29,6 @@ const Hero = () => {
             </Link>
           </div>
         </div>
-        {/* image section */}
         <div className=" flex items-center justify-center ">
           <img src={heroImg} alt="" className="md:h-137.5 md:w-137.5" />
         </div>
@@ -37,5 +36,3 @@ const Hero = () => {
     </div>
   );
 };
-
-export default Hero;

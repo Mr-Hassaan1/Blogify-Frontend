@@ -1,9 +1,9 @@
-import { BarChart3, Eye, MessageSquare, ThumbsUp } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { toast } from "sonner";
+import { BarChart3, Eye, MessageSquare, ThumbsUp } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useDispatch, useSelector } from "react-redux";
 import { setBlog } from "@/Redux/blogSlice";
 
 const TotalProperty = () => {
@@ -16,43 +16,52 @@ const TotalProperty = () => {
     const timer = setTimeout(() => {
       const getOwnBlog = async () => {
         try {
-          const res = await axios.get(
-            `/blog/get-own-blogs`,
-            { withCredentials: true },
-          );
+          const res = await axios.get(`/blog/get-own-blogs`, {
+            withCredentials: true,
+          });
           if (res.data.success) {
             dispatch(setBlog(res.data.blogs));
           }
         } catch (error) {
-          toast.error(error.response?.data?.message || error.message || "Failed to load your blogs.");
+          toast.error(
+            error.response?.data?.message ||
+              error.message ||
+              "Failed to load your blogs.",
+          );
         }
       };
 
       const getTotalComments = async () => {
         try {
-          const res = await axios.get(
-            `/comment/my-blogs/comments`,
-            { withCredentials: true },
-          );
+          const res = await axios.get(`/comment/my-blogs/comments`, {
+            withCredentials: true,
+          });
           if (res.data.success) {
             setTotalComments(res.data.totalComments);
           }
         } catch (error) {
-          toast.error(error.response?.data?.message || error.message || "Failed to load comments count.");
+          toast.error(
+            error.response?.data?.message ||
+              error.message ||
+              "Failed to load comments count.",
+          );
         }
       };
 
       const getTotalLikes = async () => {
         try {
-          const res = await axios.get(
-            `/blog/my-blogs/likes`,
-            { withCredentials: true },
-          );
+          const res = await axios.get(`/blog/my-blogs/likes`, {
+            withCredentials: true,
+          });
           if (res.data.success) {
             setTotalLikes(res.data.totalLikes);
           }
         } catch (error) {
-          toast.error(error.response?.data?.message || error.message || "Failed to load likes count.");
+          toast.error(
+            error.response?.data?.message ||
+              error.message ||
+              "Failed to load likes count.",
+          );
         }
       };
 

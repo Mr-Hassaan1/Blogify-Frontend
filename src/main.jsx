@@ -4,7 +4,7 @@ import axios from "axios";
 import { Toaster } from "@/components/ui/sonner";
 import { Provider } from "react-redux";
 import store from "./Redux/store";
-import ThemeProvider from "./components/ThemeProvider";
+import ThemeProvider from "./components/common/ThemeProvider";
 import AuthProviderGate from "./components/AuthProviderGate";
 
 axios.defaults.withCredentials = true;

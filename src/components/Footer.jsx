@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import Logo from "../assets/logo.png";
+import Logo from "../assets/images/logo.png";
 import {
   FaFacebook,
   FaInstagram,
@@ -7,7 +7,7 @@ import {
   FaTwitterSquare,
 } from "react-icons/fa";
 
-const Footer = () => {
+export const Footer = () => {
   return (
     <footer className="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-200 py-10">
       <div className="max-w-7xl mx-auto px-4 md:flex md:justify-between">
@@ -83,5 +83,3 @@ const Footer = () => {
     </footer>
   );
 };
-
-export default Footer;

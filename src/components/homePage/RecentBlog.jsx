@@ -1,14 +1,14 @@
+import axios from "axios";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import BlogCardList from "./BlogCardList";
+import { BlogCardList } from "@/components/homePage/BlogCardList";
 import { useNavigate } from "react-router-dom";
 import { setBlog, setLoading } from "@/Redux/blogSlice";
-import axios from "axios";
 import { toast } from "sonner";
-import { Badge } from "./ui/badge";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import { Skeleton } from "./ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const tags = [
   {
@@ -34,7 +34,7 @@ const tags = [
   },
 ];
 
-const RecentBlog = () => {
+export const RecentBlog = () => {
   const { blog, loading } = useSelector((store) => store.blog);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -43,15 +43,18 @@ const RecentBlog = () => {
     const getAllPublishedBlogs = async () => {
       dispatch(setLoading(true));
       try {
-        const res = await axios.get(
-          `/blog/get-published-blogs`,
-          { withCredentials: true },
-        );
+        const res = await axios.get(`/blog/get-published-blogs`, {
+          withCredentials: true,
+        });
         if (res.data.success) {
           dispatch(setBlog(res.data.blogs));
         }
       } catch (error) {
-        toast.error(error.response?.data?.message || error.message || "Unable to load recent blogs.");
+        toast.error(
+          error.response?.data?.message ||
+            error.message ||
+            "Unable to load recent blogs.",
+        );
       } finally {
         dispatch(setLoading(false));
       }
@@ -72,7 +75,10 @@ const RecentBlog = () => {
           <div className="space-y-6">
             {loading
               ? Array.from({ length: 4 }).map((_, index) => (
-                  <div key={index} className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-600 dark:bg-gray-700">
+                  <div
+                    key={index}
+                    className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-600 dark:bg-gray-700"
+                  >
                     <div className="flex flex-col gap-6 md:flex-row">
                       <Skeleton className="h-56 w-full rounded-3xl md:w-72" />
                       <div className="flex-1 space-y-3">
@@ -84,7 +90,11 @@ const RecentBlog = () => {
                     </div>
                   </div>
                 ))
-              : blog?.slice(0, 4)?.map((blogItem, index) => <BlogCardList key={index} blog={blogItem} />)}
+              : blog
+                  ?.slice(0, 4)
+                  ?.map((blogItem, index) => (
+                    <BlogCardList key={index} blog={blogItem} />
+                  ))}
           </div>
         </div>
 
@@ -114,7 +124,9 @@ const RecentBlog = () => {
                 placeholder="Enter your email"
                 className="flex h-12 w-full rounded-2xl border bg-gray-100 dark:bg-gray-800 px-3 text-sm text-gray-700 dark:text-gray-200"
               />
-              <Button className="w-full mt-1 sm:w-auto cursor-pointer">Subscribe</Button>
+              <Button className="w-full mt-1 sm:w-auto cursor-pointer">
+                Subscribe
+              </Button>
             </div>
           </div>
           <div className="mt-8">
@@ -140,5 +152,3 @@ const RecentBlog = () => {
     </div>
   );
 };
-
-export default RecentBlog;

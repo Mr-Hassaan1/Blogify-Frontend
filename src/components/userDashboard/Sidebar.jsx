@@ -3,7 +3,7 @@ import { LiaCommentSolid } from "react-icons/lia";
 import { NavLink } from "react-router-dom";
 import { FaRegEdit } from "react-icons/fa";
 
-const Sidebar = () => {
+export const Sidebar = () => {
   return (
     <div className="hidden mt-10 fixed md:block border-r-2 dark:bg-gray-800 bg-gray-200 border-gray-300 dark:border-gray-600 0 w-75 p-10 space-y-2 h-screen z-10">
       <div className="text-center pt-10 px-3 space-y-2">
@@ -50,5 +50,3 @@ const Sidebar = () => {
     </div>
   );
 };
-
-export default Sidebar;

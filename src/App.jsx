@@ -1,19 +1,19 @@
-import Signup from "./pages/Signup";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Navbar from "./components/Navbar";
-import Profile from "./pages/Profile";
-import Blog from "./pages/Blog";
-import Dashboard from "./pages/Dashboard";
-import YourBlog from "./pages/YourBlog";
-import BlogView from "./pages/BlogView";
-import Footer from "./components/Footer";
-import About from "./pages/About";
-import Comments from "./pages/Comments";
-import UpdateBlog from "./pages/UpdateBlog";
-import ProtectedRoute from "./components/ProtectedRoute";
-import SearchList from "./pages/SearchList";
+import { Signup } from "@/pages/Signup";
+import { Login } from "@/pages/Login";
+import { Navbar } from "@/components/Navbar";
+import { Home } from "@/pages/Home";
+import { Blog } from "@/pages/Blog";
+import { About } from "@/pages/About";
+import { Dashboard } from "@/pages/Dashboard";
+import { Profile } from "@/pages/Profile";
+import { YourBlog } from "@/pages/YourBlog";
+import { Comments } from "@/pages/Comments";
+import { CreateUpdateBlog } from "@/pages/CreateUpdateBlog";
+import { BlogView } from "@/pages/BlogView";
+import { SearchList } from "@/pages/SearchList";
+import { Footer } from "@/components/Footer";
+import { ProtectedRoute } from "@/ProtectedRoutes/ProtectedRoute";
 
 const router = createBrowserRouter([
   {
@@ -82,7 +82,7 @@ const router = createBrowserRouter([
         path: "create-blog",
         element: (
           <>
-            <UpdateBlog />
+            <CreateUpdateBlog />
           </>
         ),
       },
@@ -90,7 +90,7 @@ const router = createBrowserRouter([
         path: "create-blog/:blogId",
         element: (
           <>
-            <UpdateBlog />
+            <CreateUpdateBlog />
           </>
         ),
       },

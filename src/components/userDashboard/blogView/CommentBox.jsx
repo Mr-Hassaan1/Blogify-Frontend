@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import userLogo from "../assets/user.jpg";
-import { Textarea } from "./ui/textarea";
-import { FaHeart, FaRegHeart } from "react-icons/fa6";
-import { Button } from "./ui/button";
-import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
+import userLogo from "@/assets/images/user.jpg";
+import { useEffect, useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Textarea } from "@/components/ui/textarea";
+import { FaHeart, FaRegHeart } from "react-icons/fa6";
+import { Button } from "@/components/ui/button";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { setBlog } from "@/Redux/blogSlice";
 import { setComment } from "@/Redux/commentSlice";
@@ -26,7 +26,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-const CommentBox = ({ selectedBlog }) => {
+export const CommentBox = ({ selectedBlog }) => {
   const { user } = useSelector((store) => store.auth);
   const { comment } = useSelector((store) => store.comment);
   const [content, setContent] = useState("");
@@ -49,9 +49,7 @@ const CommentBox = ({ selectedBlog }) => {
 
     const getAllCommentsOfBlog = async () => {
       try {
-        const res = await axios.get(
-          `/comment/${selectedBlog._id}/comment/all`,
-        );
+        const res = await axios.get(`/comment/${selectedBlog._id}/comment/all`);
 
         if (!cancelled) {
           dispatch(setComment(res.data.comments || []));
@@ -102,19 +100,16 @@ const CommentBox = ({ selectedBlog }) => {
         dispatch(setBlog(updatedBlogData));
         setContent("");
       }
-    } catch (error) {      console.log(error);
-
+    } catch (error) {
+      console.log(error);
     }
   };
 
   const deleteComment = async (commentId) => {
     try {
-      const res = await axios.delete(
-        `/comment/${commentId}/delete`,
-        {
-          withCredentials: true,
-        },
-      );
+      const res = await axios.delete(`/comment/${commentId}/delete`, {
+        withCredentials: true,
+      });
       if (res.data.success) {
         const updatedCommentData = comment.filter(
           (item) => item._id !== commentId,
@@ -194,12 +189,9 @@ const CommentBox = ({ selectedBlog }) => {
     );
 
     try {
-      const res = await axios.get(
-        `/comment/${commentId}/like`,
-        {
-          withCredentials: true,
-        },
-      );
+      const res = await axios.get(`/comment/${commentId}/like`, {
+        withCredentials: true,
+      });
 
       if (!res.data.success) {
         throw new Error(res.data.message || "Unable to update comment like.");
@@ -381,5 +373,3 @@ const CommentBox = ({ selectedBlog }) => {
     </div>
   );
 };
-
-export default CommentBox;
