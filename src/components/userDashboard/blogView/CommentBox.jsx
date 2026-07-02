@@ -1,4 +1,3 @@
-import axios from "axios";
 import userLogo from "@/assets/images/user.jpg";
 import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -25,6 +24,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  createBlogComment,
+  deleteBlogComment,
+  getBlogComments,
+  likeBlogComment,
+  updateBlogComment,
+} from "@/services/apis/commentApi";
 
 export const CommentBox = ({ selectedBlog }) => {
   const { user } = useSelector((store) => store.auth);
@@ -49,7 +55,7 @@ export const CommentBox = ({ selectedBlog }) => {
 
     const getAllCommentsOfBlog = async () => {
       try {
-        const res = await axios.get(`/comment/${selectedBlog._id}/comment/all`);
+        const res = await await getBlogComments(selectedBlog._id);
 
         if (!cancelled) {
           dispatch(setComment(res.data.comments || []));
@@ -72,16 +78,7 @@ export const CommentBox = ({ selectedBlog }) => {
 
   const commentHandler = async () => {
     try {
-      const res = await axios.post(
-        `/comment/${selectedBlog._id}/create`,
-        { content },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        },
-      );
+      const res = await createBlogComment(selectedBlog._id, { content });
       if (res.data.success) {
         let updatedCommentData;
 
@@ -107,9 +104,7 @@ export const CommentBox = ({ selectedBlog }) => {
 
   const deleteComment = async (commentId) => {
     try {
-      const res = await axios.delete(`/comment/${commentId}/delete`, {
-        withCredentials: true,
-      });
+      const res = await deleteBlogComment(commentId);
       if (res.data.success) {
         const updatedCommentData = comment.filter(
           (item) => item._id !== commentId,
@@ -132,17 +127,9 @@ export const CommentBox = ({ selectedBlog }) => {
 
   const editCommentHandler = async (commentId) => {
     try {
-      const res = await axios.put(
-        `/comment/${commentId}/edit`,
-        { content: editedContent },
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
-
+      const res = await updateBlogComment(commentId, {
+        content: editedContent,
+      });
       if (res.data.success) {
         const updatedCommentData = comment.map((item) =>
           item._id === commentId ? { ...item, content: editedContent } : item,
@@ -189,9 +176,7 @@ export const CommentBox = ({ selectedBlog }) => {
     );
 
     try {
-      const res = await axios.get(`/comment/${commentId}/like`, {
-        withCredentials: true,
-      });
+      const res = await likeBlogComment(commentId);
 
       if (!res.data.success) {
         throw new Error(res.data.message || "Unable to update comment like.");

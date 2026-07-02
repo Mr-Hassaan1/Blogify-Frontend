@@ -1,4 +1,4 @@
-import axios from "axios";
+import { signupUser } from "@/services/apis/authApi";
 import authImg from "@/assets/images/signup.jpg";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -59,12 +59,7 @@ export function SignupPage() {
 
     try {
       dispatch(setLoading(true));
-      const res = await axios.post("/user/register", userData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
+      const res = await signupUser(userData);
 
       if (res.data.success) {
         navigate("/login");

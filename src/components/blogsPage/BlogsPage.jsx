@@ -1,4 +1,4 @@
-import axios from "axios";
+import { getPublishedBlogs } from "@/services/apis/blogApi";
 import { BlogCard } from "@/components/common/BlogCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect } from "react";
@@ -13,10 +13,10 @@ export const BlogsPage = () => {
   useEffect(() => {
     const getAllPublishedBlogs = async () => {
       dispatch(setLoading(true));
+
       try {
-        const res = await axios.get(`/blog/get-published-blogs`, {
-          withCredentials: true,
-        });
+        const res = await getPublishedBlogs();
+
         if (res.data.success) {
           dispatch(setBlog(res.data.blogs));
         }

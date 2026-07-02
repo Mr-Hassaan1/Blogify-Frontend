@@ -1,4 +1,9 @@
-import axios from "axios";
+import {
+  getBlogById,
+  createBlog,
+  updateBlog,
+  deleteBlogById,
+} from "@/services/apis/blogApi";
 import JoditEditor from "jodit-react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -58,9 +63,7 @@ export function CreateUpdateBlogPage() {
 
     const fetchBlog = async () => {
       try {
-        const res = await axios.get(`/blog/${id}`, {
-          withCredentials: true,
-        });
+        const res = await getBlogById(id);
 
         if (res.data.success && !ignore) {
           const fetchedBlog = res.data.blog;
@@ -149,14 +152,9 @@ export function CreateUpdateBlogPage() {
 
     try {
       setLoading(true);
-      const url = isCreateMode ? `/blog/` : `/blog/${id}`;
-      const method = isCreateMode ? axios.post : axios.put;
-      const res = await method(url, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        withCredentials: true,
-      });
+      const res = isCreateMode
+        ? await createBlog(formData)
+        : await updateBlog(id, formData);
 
       if (res.data.success) {
         toast.success(res.data.message);
@@ -204,9 +202,7 @@ export function CreateUpdateBlogPage() {
     if (isCreateMode) return;
 
     try {
-      const res = await axios.delete(`/blog/delete/${id}`, {
-        withCredentials: true,
-      });
+      const res = await deleteBlogById(id);
       if (res.data.success) {
         const updatedBlogData = blog.filter((blogItem) => blogItem?._id !== id);
         dispatch(setBlog(updatedBlogData));

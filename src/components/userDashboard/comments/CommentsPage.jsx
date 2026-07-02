@@ -1,4 +1,4 @@
-import axios from "axios";
+import { getTotalComments } from "@/services/apis/commentApi";
 import { Card } from "@/components/ui/card";
 import {
   Table,
@@ -18,11 +18,9 @@ export default function CommentsPage() {
   const [allComments, setAllComments] = useState([]);
   const navigate = useNavigate();
 
-  const getTotalComments = async () => {
+  const fetchTotalComments = async () => {
     try {
-      const res = await axios.get(`/comment/my-blogs/comments`, {
-        withCredentials: true,
-      });
+      const res = await getTotalComments();
       if (res.data.success) {
         setAllComments(res.data.comments);
       }
@@ -36,7 +34,7 @@ export default function CommentsPage() {
   };
 
   useEffect(() => {
-    setTimeout(() => getTotalComments(), 0);
+    setTimeout(() => fetchTotalComments(), 0);
   }, []);
 
   return (

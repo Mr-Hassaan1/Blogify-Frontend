@@ -1,4 +1,4 @@
-import axios from "axios";
+import { loginUser } from "@/services/apis/authApi";
 import authImg from "@/assets/images/login.png";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -57,12 +57,7 @@ export function LoginPage() {
 
     try {
       dispatch(setLoading(true));
-      const res = await axios.post("/user/login", inputFields, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
+      const res = await loginUser(inputFields);
 
       if (res.data.success) {
         if (res.data.token) {

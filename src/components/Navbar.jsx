@@ -1,4 +1,4 @@
-import axios from "axios";
+import { logoutUser } from "@/services/apis/authApi";
 import Logo from "../assets/images/logo.png";
 import userLogo from "../assets/images/user.jpg";
 import { useState } from "react";
@@ -63,13 +63,10 @@ export function Navbar() {
     navigate("/login", { replace: true });
 
     try {
-      const res = await axios.get("/user/logout", {
-        withCredentials: true,
-      });
+      const data = await logoutUser();
 
-      if (res.data.success) {
-        toast.success(res.data.message || "Logged out successfully.");
-        return;
+      if (data.success) {
+        toast.success(data.message || "Logged out successfully.");
       }
     } catch (error) {
       toast.error(
@@ -205,7 +202,10 @@ export function Navbar() {
                 >
                   Logout
                 </Button>
-                <Dialog open={logoutDialogOpen} onOpenChange={setLogoutDialogOpen}>
+                <Dialog
+                  open={logoutDialogOpen}
+                  onOpenChange={setLogoutDialogOpen}
+                >
                   <DialogContent>
                     <DialogHeader>
                       <DialogTitle>Confirm Logout</DialogTitle>
@@ -214,7 +214,12 @@ export function Navbar() {
                       </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
-                      <Button variant="outline" onClick={() => setLogoutDialogOpen(false)}>Cancel</Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => setLogoutDialogOpen(false)}
+                      >
+                        Cancel
+                      </Button>
                       <Button onClick={handleLogoutConfirmed}>Logout</Button>
                     </DialogFooter>
                   </DialogContent>
@@ -247,4 +252,3 @@ export function Navbar() {
     </div>
   );
 }
-
