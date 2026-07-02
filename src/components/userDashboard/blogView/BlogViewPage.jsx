@@ -1,4 +1,4 @@
-import axios from "axios";
+import { getBlogById, likeOrDislikeBlog } from "@/services/apis/blogApi";
 import userLogo from "@/assets/images/user.jpg";
 import { useEffect, useState } from "react";
 import {
@@ -65,9 +65,7 @@ export function BlogViewPage() {
 
     try {
       const action = previousLiked ? "dislike" : "like";
-      const res = await axios.get(`/blog/${selectedBlog?._id}/${action}`, {
-        withCredentials: true,
-      });
+      const res = await likeOrDislikeBlog(selectedBlog._id, action);
 
       if (!res.data.success) {
         throw new Error(res.data.message || "Unable to update like status.");
@@ -118,9 +116,7 @@ export function BlogViewPage() {
     const fetchBlog = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`/blog/${blogId}`, {
-          withCredentials: true,
-        });
+        const res = await getBlogById(blogId);
 
         if (res.data.success) {
           const fetchedBlog = res.data.blog;

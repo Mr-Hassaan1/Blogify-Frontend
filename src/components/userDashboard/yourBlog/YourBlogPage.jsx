@@ -1,3 +1,8 @@
+import {
+  getOwnBlogs,
+  togglePublishBlog,
+  deleteBlogById,
+} from "@/services/apis/blogApi";
 import { Card } from "@/components/ui/card";
 import {
   Table,
@@ -8,7 +13,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import axios from "axios";
 import { CloudOff, Edit, Globe, Trash2 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
@@ -41,12 +45,10 @@ export function YourBlogPage() {
   const [publishData, setPublishData] = useState(null);
 
   useEffect(() => {
-    const getOwnBlog = async () => {
+    const fetchOwnBlog = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`/blog/get-own-blogs`, {
-          withCredentials: true,
-        });
+        const res = await getOwnBlogs();
 
         if (res.data.success) {
           setBlogs(res.data.blogs || []);
@@ -61,7 +63,7 @@ export function YourBlogPage() {
       }
     };
 
-    getOwnBlog();
+    fetchOwnBlog();
   }, []);
 
   const dateHandler = (index) => {
@@ -72,11 +74,8 @@ export function YourBlogPage() {
 
   const togglePublish = async (id, publish) => {
     try {
-      const res = await axios.patch(
-        `/blog/${id}?isPublished=${publish}`,
-        null,
-        { withCredentials: true },
-      );
+      const res = await togglePublishBlog(id, publish);
+
       if (res.data.success) {
         const updatedBlogData = blogs.map((blogItem) =>
           blogItem._id === id
@@ -96,9 +95,7 @@ export function YourBlogPage() {
 
   const deleteBlog = async (id) => {
     try {
-      const res = await axios.delete(`/blog/delete/${id}`, {
-        withCredentials: true,
-      });
+      const res = await deleteBlogById(id);
       if (res.data.success) {
         const updatedBlogData = blogs.filter(
           (blogItem) => blogItem?._id !== id,

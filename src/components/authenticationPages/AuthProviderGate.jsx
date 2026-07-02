@@ -1,6 +1,6 @@
+import { getCurrentUser } from "@/services/apis/authApi";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import axios from "axios";
 import { Loader2 } from "lucide-react";
 import { setUser } from "@/Redux/authSlice";
 import App from "@/App";
@@ -22,10 +22,7 @@ function AuthProviderGate() {
           return;
         }
 
-        const res = await axios.get("/user/me", {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        });
+        const res = await getCurrentUser(token);
 
         if (mounted && res.data.success) {
           dispatch(setUser(res.data.user));

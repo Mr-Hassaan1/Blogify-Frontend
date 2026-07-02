@@ -1,4 +1,4 @@
-import axios from "axios";
+import { getPublishedBlogs } from "@/services/apis/blogApi";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BlogCardList } from "@/components/homePage/BlogCardList";
@@ -40,12 +40,12 @@ export const RecentBlog = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const getAllPublishedBlogs = async () => {
+    const fetchPublishedBlogs = async () => {
       dispatch(setLoading(true));
+
       try {
-        const res = await axios.get(`/blog/get-published-blogs`, {
-          withCredentials: true,
-        });
+        const res = await getPublishedBlogs();
+
         if (res.data.success) {
           dispatch(setBlog(res.data.blogs));
         }
@@ -59,7 +59,8 @@ export const RecentBlog = () => {
         dispatch(setLoading(false));
       }
     };
-    getAllPublishedBlogs();
+
+    fetchPublishedBlogs();
   }, [dispatch]);
 
   return (

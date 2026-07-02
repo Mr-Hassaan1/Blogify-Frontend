@@ -1,4 +1,4 @@
-import axios from "axios";
+import { getAllUsers } from "@/services/apis/usersApi";
 import userLogo from "@/assets/images/user.jpg";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
@@ -9,11 +9,9 @@ export const PopularAuthors = () => {
   useEffect(() => {
     let active = true;
 
-    const getAllUsers = async () => {
+    const fetchUsers = async () => {
       try {
-        const res = await axios.get(
-          `/user/all-users`,
-        );
+        const res = await getAllUsers();
 
         if (active && res.data.success) {
           setPopularUser(res.data.users);
@@ -27,7 +25,7 @@ export const PopularAuthors = () => {
       }
     };
 
-    getAllUsers();
+    fetchUsers();
 
     return () => {
       active = false;
@@ -62,4 +60,3 @@ export const PopularAuthors = () => {
     </div>
   );
 };
-

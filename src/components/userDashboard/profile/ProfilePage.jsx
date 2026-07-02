@@ -1,3 +1,4 @@
+import { updateProfile } from "@/services/apis/profileApi";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import userLogo from "@/assets/images/user.jpg";
 import { FaFacebook, FaGithub, FaInstagram, FaLinkedin } from "react-icons/fa";
@@ -16,7 +17,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
-import axios from "axios";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { setUser } from "@/Redux/authSlice";
@@ -75,12 +75,7 @@ export function ProfilePage() {
 
     try {
       setLoading(true);
-      const res = await axios.put(`/user/profile/update`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        withCredentials: true,
-      });
+      const res = await updateProfile(formData);
 
       if (res.data.success) {
         setOpen(false);

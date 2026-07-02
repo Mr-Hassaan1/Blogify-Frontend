@@ -1,4 +1,5 @@
-import axios from "axios";
+import { getOwnBlogs, getTotalLikes } from "@/services/apis/blogApi";
+import { getTotalComments } from "@/services/apis/commentApi";
 import { toast } from "sonner";
 import { BarChart3, Eye, MessageSquare, ThumbsUp } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -14,11 +15,9 @@ const TotalProperty = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      const getOwnBlog = async () => {
+      const fetchOwnBlog = async () => {
         try {
-          const res = await axios.get(`/blog/get-own-blogs`, {
-            withCredentials: true,
-          });
+          const res = await getOwnBlogs();
           if (res.data.success) {
             dispatch(setBlog(res.data.blogs));
           }
@@ -31,11 +30,9 @@ const TotalProperty = () => {
         }
       };
 
-      const getTotalComments = async () => {
+      const fetchTotalComments = async () => {
         try {
-          const res = await axios.get(`/comment/my-blogs/comments`, {
-            withCredentials: true,
-          });
+          const res = await getTotalComments();
           if (res.data.success) {
             setTotalComments(res.data.totalComments);
           }
@@ -48,11 +45,9 @@ const TotalProperty = () => {
         }
       };
 
-      const getTotalLikes = async () => {
+      const fetchTotalLikes = async () => {
         try {
-          const res = await axios.get(`/blog/my-blogs/likes`, {
-            withCredentials: true,
-          });
+          const res = await getTotalLikes();
           if (res.data.success) {
             setTotalLikes(res.data.totalLikes);
           }
@@ -65,9 +60,9 @@ const TotalProperty = () => {
         }
       };
 
-      getOwnBlog();
-      getTotalComments();
-      getTotalLikes();
+      fetchOwnBlog();
+      fetchTotalComments();
+      fetchTotalLikes();
     }, 0);
 
     return () => clearTimeout(timer);
@@ -76,7 +71,7 @@ const TotalProperty = () => {
   const stats = [
     {
       title: "Total Views",
-      value: "24.8K",
+      value: "12.8K",
       icon: Eye,
       change: "+12%",
       trend: "up",
